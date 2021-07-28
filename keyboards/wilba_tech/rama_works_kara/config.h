@@ -35,7 +35,7 @@
 
 // IS31FL3731 driver
 #define DRIVER_COUNT 2
-#define DRIVER_LED_TOTAL 72
+#define DRIVER_LED_TOTAL 62
 
 // This is a 7-bit address, that gets left-shifted and bit 0
 // set to 0 for write, 1 for read (as per I2C protocol)
