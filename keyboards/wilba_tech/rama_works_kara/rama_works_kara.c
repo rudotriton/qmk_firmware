@@ -101,6 +101,13 @@ const is31_led g_is31_leds[DRIVER_LED_TOTAL] = {
 };
 
 led_config_t g_led_config = { {
+// all the leds in sequence:
+// 17, 16, 15, 14, 13, 12, 11, 10,  9, 18, 19, 20,  21,  22, 23
+//  7,  6,  5,  4,  3,  2,  1,  0,  24, 25, 26, 27, 29, 30,
+//  8, 45, 44, 43, 42, 41,  40,  47,  48,  49,  50,  51,  52,
+// 46, 36  35,  34,  33,  32,  56, 57, 58, 59,  53,  54,  55,
+// C17,  39,  38,  37, ---, ---, ---,  31, ---, 60, 61, 62,
+//
 // Note: Left spacebar stab is at 4,3 (LC6)
 // Right spacebar stab is at 4,9 (LD13)
 //
@@ -109,6 +116,7 @@ led_config_t g_led_config = { {
 //  A8, C14, C13, C12, C11, C10,  C9,  D0,  D1,  D2,  D3,  D4,  D5,
 // C16, C15,  C5,  C4,  C3,  C2,  C1,  D9, D10, D11, D12,  D6,  D7,  D8,
 // C17,  C8,  C7,  C6, ---, ---, ---,  C0, ---, D13, D14, D15, D16, D17,
+//
  { _LA+17, _LA+16, _LA+15, _LA+14, _LA+13, _LA+12, _LA+11, _LA+10,  _LA+9, _LB+0, _LB+1, _LB+2, _LB+3, _LB+4 },
  { _LA+7, _LA+6, _LA+5, _LA+4, _LA+3, _LA+2,  _LA+1,  _LA+0, _LB+9, _LB+10, _LB+11, _LB+12, _LB+13, _LB+14 },
  { _LA+8, _LC+14, _LC+13, _LC+12, _LC+11, _LC+10, _LC+9, _LD+0, _LD+1, _LD+2, _LD+3, _LD+4, _LD+5 },
