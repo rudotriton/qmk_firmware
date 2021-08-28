@@ -18,24 +18,42 @@
 #include "config_common.h"
 
 // USB Device descriptor parameter
-#define VENDOR_ID       0x5241 // "RA"
-#define PRODUCT_ID      0x4B52 // "KR"
-#define DEVICE_VER      0x0001
-#define MANUFACTURER    RAMA WORKS
-#define PRODUCT         RAMA WORKS KARA
+#define VENDOR_ID 0x5241   // "RA"
+#define PRODUCT_ID 0x4B52  // "KR"
+#define DEVICE_VER 0x0001
+#define MANUFACTURER RAMA WORKS
+#define PRODUCT RAMA WORKS KARA
 
 // key matrix size
 #define MATRIX_ROWS 5
 #define MATRIX_COLS 14
 
 // M60-A PCB default pin-out
-#define MATRIX_ROW_PINS { F0, F1, F4, F6, F7 }
-#define MATRIX_COL_PINS { F5, D5, B1, B2, B3, D3, D2, C7, C6, B6, B5, B4, D7, D6 }
+#define MATRIX_ROW_PINS \
+    { F0, F1, F4, F6, F7 }
+#define MATRIX_COL_PINS \
+    { F5, D5, B1, B2, B3, D3, D2, C7, C6, B6, B5, B4, D7, D6 }
 #define UNUSED_PINS
 
 // IS31FL3731 driver
 #define DRIVER_COUNT 2
 #define DRIVER_LED_TOTAL 62
+
+#define RGBLED_NUM 62
+
+#define LED_LAYOUT( \
+  L17, L16, L15, L14, L13, L12, L11, L10, L9, L18, L19, L20, L21, L22, L23, \
+  L7, L6, L5, L4, L3, L2, L1, L0, L24, L25, L26, L27, L28, L29, \
+  L8, L44, L43, L42, L41, L40, L39, L46, L47, L48, L49, L50, L51, \
+  L45, L35, L34, L33, L32, L31, L55, L56, L57, L58, L52, L53, L54, \
+  L38, L37, L36, L30, L59, L60, L61) \
+ { \
+  L0, L1, L2, L3, L4, L5, L6, L7, L8, L9, L10, L11, L12, L13, L14, \
+  L15, L16, L17, L18, L19, L20, L21, L22, L23, L24, L25, L26, L27, L28, \
+  L29, L30, L31, L32, L33, L34, L35, L36, L37, L38, L39, L40, L41, \
+  L42, L43, L44, L45, L46, L47, L48, L49, L50, L51, L52, L53, L54, \
+  L55, L56, L57, L58, L59, L60, L61 \
+}
 
 // This is a 7-bit address, that gets left-shifted and bit 0
 // set to 0 for write, 1 for read (as per I2C protocol)

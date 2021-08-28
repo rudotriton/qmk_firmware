@@ -298,15 +298,12 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     }
 }
 
+// int led_seq[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19, 20, 21, 22, 23, 29, 28, 27, 26, 25, 24, 0, 1, 2, 3, 4, 5, 6, 7, 8, 44, 43, 42, 41, 40, 39, 46, 47, 48, 49, 50, 51, 54, 53, 52, 58, 57, 56, 55, 31, 32, 33, 34, 35, 45, 38, 37, 36, 30, 59, 60, 61};
+
 // color caps lock green when caps is on
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     if (host_keyboard_led_state().caps_lock) {
-        // rgb_matrix_set_color(8, RGB_GREEN);
-        int led_seq[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19, 20, 21, 22, 23, 30, 29, 28, 27, 26, 25, 24, 0, 1, 2, 3, 4, 5, 6, 7, 8, 45, 44, 43, 42, 41, 40, 47, 48, 49, 50, 51, 52, 55, 54, 53, 59, 58, 57, 56, 32, 33, 34, 35, 36, 46, 39, 38, 37, 31, 60, 61, 62};
-        rgb_matrix_enable_noeeprom();  // enables Rgb, without saving settings
-        for (int i = 0; i < DRIVER_LED_TOTAL; ++i) {
-            rgb_matrix_set_color(led_seq[i], RGB_RED);
-        }
+        rgb_matrix_set_color(8, RGB_GREEN);
     }
 }
 
@@ -314,14 +311,12 @@ void keyboard_post_init_user(void) {
     hue           = 180;
     saturation    = 255;
     value         = 200;
-    int led_seq[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19, 20, 21, 22, 32, 31, 30, 29, 28, 27, 0, 1, 2, 3, 4, 5, 6, 7, 8, 46, 45, 44, 43, 42, 41, 54, 55, 56, 57, 58, 59, 62, 61, 60, 66, 65, 64, 63, 33, 34, 35, 36, 37, 48, 49, 40, 39, 38, 32, 45, 46, 47, 48, 49};
     rgb_matrix_enable_noeeprom();  // enables Rgb, without saving settings
-    for (int i = 0; i < DRIVER_LED_TOTAL; ++i) {
-        rgb_matrix_set_color(led_seq[i], RGB_RED);
-    }
-    // rgb_matrix_sethsv_noeeprom(hue, saturation, value);
-    // place for a startup animation?
-    // rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+    // for (int i = 0; i < DRIVER_LED_TOTAL; ++i) {
+        // rgb_matrix_set_color(led_seq[i], RGB_RED);
+    // }
+    rgb_matrix_sethsv_noeeprom(hue, saturation, value);
+    rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
 }
 
 // if previous layer was default one -> save it
