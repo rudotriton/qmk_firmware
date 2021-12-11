@@ -25,6 +25,8 @@ AUDIO_ENABLE = no           # Audio output
 
 TAP_DANCE_ENABLE = yes
 
+LTO_ENABLE = yes # link time optimization, reduces compile size
+
 CIE1931_CURVE = yes
 
 LAYOUTS = 60_hhkb

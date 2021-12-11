@@ -40,22 +40,23 @@ enum my_keycodes {
 #define _QWERTYM 1
 #define _COLEMAK 2
 #define _QWERTY 3
-#define _FNONE 4
-#define _FNTWO 5
-#define _FNBOTH 6
-#define _SYMBOLS 7
-#define _NUMPAD 8
-#define _MOUSE 9
+#define _SYMBOLS 4
+#define _NUMPAD 5
+#define _MOUSE 6
+#define _FNONE 7
+#define _FNTWO 8
+#define _FNBOTH 9
 
 // 0 - colemak with homerow mods
 // 1 - qwerty with homerow mods
 // 2 - colemak clean
 // 3 - qwerty clean
-// 4 - function one media layer and various such as arrows
-// 5 - function two keyboard colors
-// 6 - function both
-// 7 - symbols
-// 8 - numpad
+// 4 - symbols
+// 5 - numpad
+// 6 - mouse layer
+// 7 - function one media layer
+// 8 - function two hsv controls
+// 9 - function both
 
 typedef enum {
   TD_NONE,
@@ -74,11 +75,6 @@ enum {
   TD_FN_01,
   TD_FN_02
 };
-
-td_state_t cur_dance(qk_tap_dance_state_t *state);
-
-void fnone_finished(qk_tap_dance_state_t *state, void *user_data);
-void fnone_reset(qk_tap_dance_state_t *state, void *user_data);
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Default layer
@@ -110,27 +106,6 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_LSFT,  KC_Z, KC_X, KC_C, KC_V, KC_B, KC_N, KC_M, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, TD(TD_FN_01),
   KC_LALT, KC_LCMD,                 KC_SPC,               KC_RCMD, TD(TD_FN_02)),
 
-  [_FNONE] = LAYOUT_60_hhkb(
-  KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_INS,  XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV, KC_MNXT, XXXXXXX, XXXXXXX, XXXXXXX, KC_PSCR, KC_SLCK, KC_PAUS, KC_UP,   XXXXXXX, KC_DEL,
-  KC_CAPS, KC_VOLD, KC_VOLU, KC_MUTE, KC_MPLY, XXXXXXX, KC_PAST, KC_PSLS, KC_HOME, KC_PGUP, KC_LEFT, KC_RGHT, XXXXXXX,
-  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PPLS, KC_PMNS, KC_END,  KC_PGDN, KC_DOWN, KC_RSFT, KC_TRNS,
-  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
-
-  [_FNTWO] = LAYOUT_60_hhkb(
-  TO(_COLEMAKM), TO(_QWERTYM), TO(_COLEMAK), TO(_QWERTY), TO(_FNONE), TO(_FNTWO), TO(_FNBOTH), TO(_SYMBOLS), TO(_NUMPAD), TO(_MOUSE), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX,       RM_MOD,       RM_RMOD,      RM_HDE,      RM_HIN,     RM_SPD,     RM_SPI,      RM_TOG,       RM_ICL,      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX,       KC_SLCK,      KC_PAUS,      RM_SDE,      RM_SIN,     XXXXXXX,    XXXXXXX,     XXXXXXX,      XXXXXXX,     RM_LCL, XXXXXXX, XXXXXXX, XXXXXXX,
-  KC_TRNS,       KC_BRIU,      KC_BRID,      RM_VDE,      RM_VIN,     XXXXXXX,    XXXXXXX,     RM_MCL,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
-  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
-
-  [_FNBOTH] = LAYOUT_60_hhkb(
-  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RESET,
-  XXXXXXX, LED_DEBUG_TOG, TEST_PREV_LED, TEST_NEXT_LED, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
-  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
-
   [_SYMBOLS] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, KC_ESC,  KC_HASH, KC_LPRN, KC_RPRN, KC_PIPE, KC_CIRC, KC_MINS, KC_EQL,  KC_ASTR, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -147,11 +122,33 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
 
   [_MOUSE] = LAYOUT_60_hhkb(
-  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RESET,
+  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, KC_WH_U, KC_MS_U, KC_WH_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN3, XXXXXXX, XXXXXXX, XXXXXXX,
   KC_TRNS, XXXXXXX, KC_WH_L, XXXXXXX, KC_WH_R, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
+
+  [_FNONE] = LAYOUT_60_hhkb(
+  KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_INS,  XXXXXXX,
+  XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV, KC_MNXT, XXXXXXX, XXXXXXX, XXXXXXX, KC_PSCR, KC_SLCK, KC_PAUS, KC_UP,   XXXXXXX, KC_DEL,
+  KC_CAPS, KC_VOLD, KC_VOLU, KC_MUTE, KC_MPLY, XXXXXXX, KC_PAST, KC_PSLS, KC_HOME, KC_PGUP, KC_LEFT, KC_RGHT, XXXXXXX,
+  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_PPLS, KC_PMNS, KC_END,  KC_PGDN, KC_DOWN, KC_RSFT, KC_TRNS,
+  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
+
+  [_FNTWO] = LAYOUT_60_hhkb(
+  TO(_COLEMAKM), TO(_QWERTYM), TO(_COLEMAK), TO(_QWERTY), TO(_SYMBOLS), TO(_NUMPAD), TO(_MOUSE), TO(_FNONE), TO(_FNTWO), TO(_FNBOTH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX,       RM_MOD,       RM_RMOD,      RM_HDE,      RM_HIN,     RM_SPD,     RM_SPI,      RM_TOG,       RM_ICL,      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX,       KC_SLCK,      KC_PAUS,      RM_SDE,      RM_SIN,     XXXXXXX,    XXXXXXX,     XXXXXXX,      XXXXXXX,     RM_LCL, XXXXXXX, XXXXXXX, XXXXXXX,
+  KC_TRNS,       KC_BRIU,      KC_BRID,      RM_VDE,      RM_VIN,     XXXXXXX,    XXXXXXX,     RM_MCL,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
+  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
+
+  [_FNBOTH] = LAYOUT_60_hhkb(
+  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, RESET,
+  XXXXXXX, LED_DEBUG_TOG, TEST_PREV_LED, TEST_NEXT_LED, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
+  KC_TRNS, KC_TRNS,                            KC_TRNS,                            KC_TRNS, KC_TRNS),
+
 };
 
 static int test_led_index, test_color;
@@ -200,6 +197,7 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             if (record->event.pressed) {
                 rgb_matrix_toggle_noeeprom();
                 if (rgb_matrix_is_enabled()) {
+                    // restore last mode if matrix is now enabled
                     rgb_matrix_mode_noeeprom(last_mode);
                 }
             }
@@ -225,7 +223,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case RM_MOD:
             if (record->event.pressed) {
-                rgb_matrix_mode_noeeprom(last_mode);
                 rgb_matrix_step_noeeprom();
                 last_mode = rgb_matrix_get_mode();
             }
@@ -233,7 +230,6 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case RM_RMOD:
             if (record->event.pressed) {
-                rgb_matrix_mode_noeeprom(last_mode);
                 rgb_matrix_step_reverse_noeeprom();
                 last_mode = rgb_matrix_get_mode();
             }
@@ -242,14 +238,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
         case RM_HDE:
             if (record->event.pressed) {
                 rgb_matrix_decrease_hue_noeeprom();
-                hue = rgb_matrix_get_hue();
             }
             return false;
             break;
         case RM_HIN:
             if (record->event.pressed) {
                 rgb_matrix_increase_hue_noeeprom();
-                hue = rgb_matrix_get_hue();
             }
             return false;
             break;
@@ -300,13 +294,17 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 // keys that can be double tapped without them repeting on the second tap
 bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case LT(_NUMPAD, KC_R):
+        case LT(_NUMPAD, KC_R): // vim double-tap replace with number
             return true;
-        case LT(_NUMPAD, KC_S):
+        case LT(_NUMPAD, KC_S): // same, but for qwerty keeb
             return true;
-        case LT(_SYMBOLS, KC_T):
+        case LT(_SYMBOLS, KC_T): // jump to symbol
             return true;
-        case LT(_SYMBOLS, KC_N):
+        case LT(_SYMBOLS, KC_F): // qwerty, jump onto a symbol
+            return true;
+        case LT(_SYMBOLS, KC_N): // things ending in n, followed by a symbol
+            return true;
+        case LT(_SYMBOLS, KC_J): // qwerty equivalent
             return true;
         default:
             return false;
@@ -322,7 +320,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       if (host_keyboard_led_state().caps_lock) {
           rgb_matrix_set_color(8, 73, 255, 143);
       }
-      
+
       if (get_mods() & MOD_BIT(KC_LSFT) || get_mods() & MOD_BIT(KC_RSFT)) {
           rgb_matrix_set_color(45, 73, 255, 143);
           rgb_matrix_set_color(53, 73, 255, 143);
@@ -342,19 +340,20 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(38, 73, 255, 143);
     }
 
+    // 6-11, 7-10, 8-9, 4-13, 5-12,9-18
     if (color_layers && color_indicators) {
       if (layer_state_is(_FNBOTH)) {
-          rgb_matrix_set_color(11, 255, 73, 173);
+          rgb_matrix_set_color(18, 255, 73, 173);
       } else if (layer_state_is(_FNONE)) {
-          rgb_matrix_set_color(13, 255, 168, 0);
-      } else if (layer_state_is(_FNTWO)) {
-          rgb_matrix_set_color(12, 255, 168, 0);
-      } else if (layer_state_is(_SYMBOLS)) {
           rgb_matrix_set_color(10, 255, 168, 0);
-      } else if (layer_state_is(_NUMPAD)) {
+      } else if (layer_state_is(_FNTWO)) {
           rgb_matrix_set_color(9, 255, 168, 0);
+      } else if (layer_state_is(_SYMBOLS)) {
+          rgb_matrix_set_color(13, 255, 168, 0);
+      } else if (layer_state_is(_NUMPAD)) {
+          rgb_matrix_set_color(12, 255, 168, 0);
       } else if (layer_state_is(_MOUSE)) {
-          rgb_matrix_set_color(18, 255, 168, 0);
+          rgb_matrix_set_color(11, 255, 168, 0);
       }
     }
 }
@@ -364,9 +363,9 @@ void keyboard_post_init_user(void) {
     saturation    = 255;
     value         = 200;
     speed         = 25;
-    rgb_matrix_enable_noeeprom();  // enables Rgb, without saving settings
-    // for (int i = 0; i < DRIVER_LED_TOTAL; ++i) {
-        // rgb_matrix_set_color(led_seq[i], RGB_RED);
+    rgb_matrix_enable_noeeprom();  // enables rgb, without saving settings
+    // for (int i = 0; i < driver_led_total; ++i) {
+        // rgb_matrix_set_color(led_seq[i], rgb_red);
     // }
     rgb_matrix_sethsv_noeeprom(hue, saturation, value);
     rgb_matrix_set_speed_noeeprom(speed);
@@ -384,7 +383,8 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
 
     if (prev_was_default) {
-        last_mode  = rgb_matrix_get_mode();  // get the current animation
+        // save default layer settings
+        last_mode  = rgb_matrix_get_mode();
         hue        = rgb_matrix_get_hue();
         saturation = rgb_matrix_get_sat();
         rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
@@ -392,12 +392,6 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     }
 
     switch (get_highest_layer(state)) {
-        case _FNONE:
-            rgb_matrix_sethsv_noeeprom(236, 255, value);
-            break;
-        case _FNBOTH:
-            rgb_matrix_sethsv_noeeprom(20, 255, value);
-            break;
         case _SYMBOLS:
             rgb_matrix_sethsv_noeeprom(30, 200, value);
             break;
@@ -406,6 +400,12 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             break;
         case _MOUSE:
             rgb_matrix_sethsv_noeeprom(120, 150, value);
+            break;
+        case _FNONE:
+            rgb_matrix_sethsv_noeeprom(236, 255, value);
+            break;
+        case _FNBOTH:
+            rgb_matrix_sethsv_noeeprom(20, 255, value);
             break;
         default:  //  for any other layer, or the default layer we use the last
           // animation instead
@@ -524,6 +524,6 @@ void fntwo_reset(qk_tap_dance_state_t *state, void *user_data) {
 }
 // Associate our tap dance key with its functionality
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_FN_01] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, fnone_finished, fnone_reset, 275),
-    [TD_FN_02] = ACTION_TAP_DANCE_FN_ADVANCED_TIME(NULL, fntwo_finished, fntwo_reset, 275)
+    [TD_FN_01] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, fnone_finished, fnone_reset),
+    [TD_FN_02] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, fntwo_finished, fntwo_reset)
 };
