@@ -22,8 +22,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 // layers
 #define _DEFAULT 0
-#define _WINDOWS 1
-#define _VIM 2
+#define _ONE 1
+#define _TWO 2
 #define _THREE 3
 #define _FOUR 4
 #define _FIVE 5
@@ -53,60 +53,32 @@ enum {
   TD_L_06
 };
 
+#define double_taps LAYOUT( KC_TRNS, TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
+
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_DEFAULT] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_WINDOWS] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_VIM] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_THREE] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_FOUR] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_FIVE] = LAYOUT(
-          KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
-
-    [_META] = LAYOUT(
-             KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
+    [_DEFAULT] = double_taps,
+    [_ONE] = double_taps,
+    [_TWO] = double_taps,
+    [_THREE] = double_taps,
+    [_FOUR] = double_taps,
+    [_FIVE] = double_taps,
+    [_META] = double_taps,
 
     [_RESET] = LAYOUT(
              KC_TRNS,
     TO(_DEFAULT), KC_NO, RESET,
     KC_NO,        KC_NO, KC_NO),
 
-    [_MUSIC] = LAYOUT(
-             KC_TRNS,
-    TD(TD_L_01), TD(TD_L_02), TD(TD_L_03),
-    TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
+    [_MUSIC] = double_taps,
 };
 
 int get_layer(void) {
   if (layer_state_is(_DEFAULT)) {
       return _DEFAULT;
-  } else if (layer_state_is(_WINDOWS)) {
-      return _WINDOWS;
-  } else if (layer_state_is(_VIM)) {
-      return _VIM;
+  } else if (layer_state_is(_ONE)) {
+      return _ONE;
+  } else if (layer_state_is(_TWO)) {
+      return _TWO;
   } else if (layer_state_is(_THREE)) {
       return _THREE;
   } else if (layer_state_is(_FOUR)) {
@@ -183,15 +155,15 @@ void rgb_encoder(bool clockwise) {
     }
 }
 
-// vim_flag
+// lt_flag
 // 0 - undo/redo
 // 1 - jumplist
-// 2 - browser tabs
+// 2 - browser tab management
 // 4 - search targets n/N
-int vim_flag = 0;
+int lt_flag = 0;
 
 void vim_encoder(bool clockwise) {
-    switch (vim_flag) {
+    switch (lt_flag) {
         case 0:
             if (clockwise) {
                   tap_code16(C(KC_R));
@@ -233,7 +205,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code(KC_VOLD);
             }
             break;
-        case _WINDOWS:
+        case _ONE:
             if (!is_cmd_tab_active) {
                 is_cmd_tab_active = true;
                 register_code(KC_RCMD);
@@ -245,7 +217,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code16(S(KC_TAB));
             }
             break;
-        case _VIM:
+        case _TWO:
             vim_encoder(clockwise);
             break;
         case _THREE:
@@ -278,29 +250,21 @@ void matrix_scan_user(void) {
     }
 }
 
-/* bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-    switch (keycode) {
-    }
-    return true;
-} */
-
 int led_indices[] = { 2, 1, 0, 3, 4, 5 };
 
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int layer = get_layer();
     switch (layer) {
-        case _VIM:
-            if (vim_flag) {
-                rgb_matrix_set_color(led_indices[vim_flag - 1], 0, 108, 255);
-            } else {
-                rgb_matrix_set_color(1, 255, 168, 0);
+        case _TWO:
+            rgb_matrix_set_color(1, 255, 168, 0);
+            if (lt_flag) {
+                rgb_matrix_set_color(led_indices[lt_flag - 1], 0, 108, 255);
             }
             break;
         case _META:
+            rgb_matrix_set_color(5, 255, 168, 0);
             if (rgb_flag) {
                 rgb_matrix_set_color(led_indices[rgb_flag - 1], 0, 108, 255);
-            } else {
-                rgb_matrix_set_color(5, 255, 168, 0);
             }
             break;
         case _RESET:
@@ -335,13 +299,77 @@ td_state_t cur_dance(qk_tap_dance_state_t *state) {
     else return TD_UNKNOWN;
 }
 
-// NOTE: START OF MOD TAPS
+// NOTE: Layer actions
 
-void vim_actions(int key_idx) {
-    vim_flag = vim_flag == key_idx ? 0 : key_idx;
+void default_actions(int key_idx, bool release) {
+    if (release) return;
     switch (key_idx) {
         case 1:
-            switch (vim_flag) {
+            tap_code(KC_MPRV);
+            break;
+        case 2:
+            tap_code(KC_MPLY);
+            break;
+        case 3:
+            tap_code(KC_MNXT);
+            break;
+        case 4:
+            layer_move(_MUSIC);
+            break;
+        case 5:
+            tap_code(KC_MUTE);
+            break;
+        case 6:
+            tap_code16(G(A(KC_H)));
+            break;
+    }
+}
+
+void layer_one_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 1:
+            if (!release)
+            tap_code16(C(KC_LEFT));
+            break;
+        case 2:
+            if (is_cmd_tab_active && !release) {
+                tap_code(KC_ENT); // allow bypassing the timeout
+            } else if (release) {
+                unregister_code16(KC_F11);
+            } else {
+                register_code16(KC_F11);
+            }
+            break;
+        case 3:
+            if (!release)
+            tap_code16(C(KC_RGHT));
+            break;
+        case 4:
+            if (!release)
+            tap_code16(G(A(KC_E)));
+            break;
+        case 5:
+            if (release) {
+                unregister_code16(C(KC_UP));
+            } else {
+                register_code16(C(KC_UP));
+            }
+            break;
+        case 6:
+            if (release) {
+                unregister_code(KC_ESC);
+            } else {
+                register_code(KC_ESC);
+            }
+            break;
+    }
+}
+
+void layer_two_actions(int key_idx, bool release) {
+    if (release) return;
+    switch (key_idx) {
+        case 1:
+            switch (lt_flag) {
                 case 2:
                     tap_code16(C(S(KC_TAB)));
                     break;
@@ -352,10 +380,16 @@ void vim_actions(int key_idx) {
                     tap_code16(C(KC_A));
                     tap_code(KC_P);
                     break;
+                default:
+                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
+                    break;
             }
             break;
+        case 2:
+            lt_flag = lt_flag == key_idx ? 0 : key_idx;
+            break;
         case 3:
-            switch (vim_flag) {
+            switch (lt_flag) {
                 case 2:
                     tap_code16(C(KC_TAB));
                     break;
@@ -366,22 +400,43 @@ void vim_actions(int key_idx) {
                     tap_code16(C(KC_A));
                     tap_code(KC_N);
                     break;
+                default:
+                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
+                    break;
             }
             break;
         case 4:
-            switch (vim_flag) {
+            switch (lt_flag) {
                 case 2:
                     tap_code16(G(KC_R)); // page refresh
+                    break;
+                default:
+                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
+                    break;
+            }
+            break;
+        case 5:
+            switch (lt_flag) {
+                case 2:
+                    tap_code16(G(S(KC_T)));
+                    break;
+                default:
+                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
                     break;
             }
             break;
         case 6:
-            switch (vim_flag) {
+            switch (lt_flag) {
                 case 2:
                     tap_code16(G(KC_W)); // close window
                     break;
+                default:
+                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
+                    break;
             }
-        break;
+            break;
+        default:
+            break;
     }
 }
 
@@ -432,7 +487,53 @@ void layer_three_actions(int key_idx, bool release) {
     }
 }
 
-void meta_actions(int key_idx) {
+void layer_four_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 1:
+            tap_code16(G(S(KC_DEL))); // Rotate monitor
+            break;
+        case 2:
+            tap_code16(G(A(KC_RBRC))); // toggle system theme
+            break;
+        case 3:
+            tap_code16(G(C(KC_Q))); // lock screen
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+    }
+}
+
+void layer_five_actions(int key_idx, bool release) {
+    if (release) return;
+
+    switch (key_idx) {
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            // copy, open new tab, paste, enter
+            tap_code16(G(KC_C));
+            tap_code16(G(KC_T));
+            tap_code16(G(KC_V));
+            tap_code(KC_ENT);
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
+            break;
+    }
+}
+
+void layer_six_actions(int key_idx, bool release) {
+    if (release) return;
+
     switch (key_idx) {
         case 1:
             switch (rgb_flag) {
@@ -467,6 +568,72 @@ void meta_actions(int key_idx) {
     }
 }
 
+void layer_seven_actions(int key_idx, bool release) {
+    if (key_idx == 6 && release)
+        layer_move(_META);
+}
+
+// some spotify actions
+void layer_eight_actions(int key_idx, bool release) {
+    if (release) return;
+    switch (key_idx) {
+        case 1:
+            tap_code16(G(KC_S));
+            break;
+        case 2:
+            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
+            break;
+        case 3:
+            tap_code16(G(KC_R));
+            break;
+        case 4:
+            layer_move(_DEFAULT);
+            break;
+        case 5:
+            tap_code(KC_BSPC);
+            break;
+        case 6:
+            // Switch to Kitty and hide other windows
+            tap_code16(G(C(KC_M)));
+            tap_code16(G(A(KC_H)));
+            break;
+    }
+}
+
+void key_switch(int key_idx, bool release) {
+    switch (get_layer()) {
+        case 0:
+            default_actions(key_idx, release);
+            break;
+        case 1:
+            layer_one_actions(key_idx, release);
+            break;
+        case 2:
+            layer_two_actions(key_idx, release);
+            break;
+        case 3:
+            layer_three_actions(key_idx, release);
+            break;
+        case 4:
+            layer_four_actions(key_idx, release);
+            break;
+        case 5:
+            layer_five_actions(key_idx, release);
+            break;
+        case 6:
+            layer_six_actions(key_idx, release);
+            break;
+        case 7:
+            layer_seven_actions(key_idx, release);
+            break;
+        case 8:
+            layer_eight_actions(key_idx, release);
+            break;
+    }
+}
+
+// NOTE: START OF TAPDANCES
+
 // NOTE: ONE
 static td_tap_t key_one_tap_state = {
     .is_press_action = true,
@@ -479,35 +646,13 @@ void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
         // NOTE: TOP LEFT KEY
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                    tap_code(KC_MPRV);
-                    break;
-                case _WINDOWS:
-                    tap_code16(C(KC_LEFT));
-                    break;
-                case _VIM:
-                    vim_actions(1);
-                    break;
-                case _THREE:
-                    layer_three_actions(1, false);
-                    break;
-                case _FOUR:
-                    tap_code16(G(S(KC_DEL))); // Rotate monitor
-                    break;
-                case _META:
-                    meta_actions(1);
-                    break;
-                case _MUSIC:
-                    tap_code16(G(KC_S));
-                    break;
-            }
+            key_switch(1, false);
             break;
         case TD_DOUBLE_TAP:
-            if (layer_state_is(_WINDOWS)) {
+            if (layer_state_is(_ONE)) {
                 layer_move(_DEFAULT);
             } else {
-                layer_move(_WINDOWS);
+                layer_move(_ONE);
             }
             break;
         default:
@@ -518,11 +663,7 @@ void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_one_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_one_tap_state.state == TD_SINGLE_HOLD || key_one_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _THREE:
-                layer_three_actions(1, true);
-                break;
-        }
+        key_switch(1, true);
     }
     key_one_tap_state.state = TD_NONE;
 }
@@ -540,40 +681,14 @@ void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
         // NOTE: TOP MIDDLE KEY
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                    tap_code(KC_MPLY);
-                    break;
-                case _WINDOWS:
-                    if (is_cmd_tab_active) {
-                        tap_code(KC_ENT); // allow bypassing the timeout
-                    } else {
-                        register_code16(KC_F11);
-                    }
-                    break;
-                case _VIM:
-                    vim_actions(2);
-                    break;
-                case _THREE:
-                    layer_three_actions(2, false);
-                    break;
-                case _FOUR:
-                    tap_code16(G(A(KC_RBRC))); // toggle system theme
-                    break;
-                case _META:
-                    meta_actions(2);
-                    break;
-                case _MUSIC:
-                    tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
-                    break;
-            }
+            key_switch(2, false);
             break;
         case TD_DOUBLE_TAP:
-            if (layer_state_is(_VIM)) {
+            if (layer_state_is(_TWO)) {
                 layer_move(_DEFAULT);
             } else {
-                layer_move(_VIM);
-                vim_flag = 0; // reset flag
+                layer_move(_TWO);
+                lt_flag = 0; // reset flag
             }
             break;
         default:
@@ -584,16 +699,7 @@ void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_two_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_two_tap_state.state == TD_SINGLE_HOLD || key_two_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _WINDOWS:
-                if (!is_cmd_tab_active) {
-                    unregister_code16(KC_F11);
-                }
-                break;
-            case _THREE:
-                layer_three_actions(2, true);
-                break;
-        }
+        key_switch(2, true);
     }
     key_two_tap_state.state = TD_NONE;
 }
@@ -611,36 +717,7 @@ void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
         // NOTE: TOP RIGHT KEY
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                    tap_code(KC_MNXT);
-                    break;
-                case _WINDOWS:
-                    tap_code16(C(KC_RGHT));
-                    break;
-                case _VIM:
-                    vim_actions(3);
-                    break;
-                case _THREE:
-                    layer_three_actions(3, false);
-                    break;
-                case _FOUR:
-                    tap_code16(G(C(KC_Q))); // lock screen
-                    break;
-                case _FIVE:
-                    // copy, open new tab, paste, enter
-                    tap_code16(G(KC_C));
-                    tap_code16(G(KC_T));
-                    tap_code16(G(KC_V));
-                    tap_code(KC_ENT);
-                    break;
-                case _META:
-                    meta_actions(3);
-                    break;
-                case _MUSIC:
-                    tap_code16(G(KC_R));
-                    break;
-            }
+            key_switch(3, false);
             break;
         case TD_DOUBLE_TAP:
             if (layer_state_is(_THREE)) {
@@ -657,11 +734,7 @@ void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_three_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_three_tap_state.state == TD_SINGLE_HOLD || key_three_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _THREE:
-                layer_three_actions(3, true);
-                break;
-        }
+        key_switch(3, true);
     }
     key_three_tap_state.state = TD_NONE;
 }
@@ -680,26 +753,7 @@ void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
         // NOTE: BOTTOM LEFT KEY
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                    layer_move(_MUSIC);
-                    break;
-                case _WINDOWS:
-                    tap_code16(G(A(KC_E)));
-                    break;
-                case _VIM:
-                    vim_actions(4);
-                    break;
-                case _THREE:
-                    layer_three_actions(4, false);
-                    break;
-                case _META:
-                    meta_actions(4);
-                    break;
-                case _MUSIC:
-                    layer_move(_DEFAULT);
-                    break;
-            }
+            key_switch(4, false);
             break;
         case TD_DOUBLE_TAP:
             if (layer_state_is(_FOUR)) {
@@ -716,11 +770,7 @@ void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_four_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_four_tap_state.state == TD_SINGLE_HOLD || key_four_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _THREE:
-                layer_three_actions(4, true);
-                break;
-        }
+        key_switch(4, true);
     }
     key_four_tap_state.state = TD_NONE;
 }
@@ -739,24 +789,7 @@ void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
         // NOTE: BOTTOM MIDDLE KEY
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                case _MUSIC:
-                    register_code(KC_MUTE);
-                    break;
-                case _WINDOWS:
-                    register_code16(C(KC_UP));
-                    break;
-                case _VIM:
-                    vim_actions(5);
-                    break;
-                case _THREE:
-                    layer_three_actions(5, false);
-                    break;
-                case _META:
-                    meta_actions(5);
-                    break;
-            }
+            key_switch(5, false);
             break;
         case TD_DOUBLE_TAP:
             if (layer_state_is(_FIVE)) {
@@ -773,18 +806,7 @@ void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_five_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_five_tap_state.state == TD_SINGLE_HOLD || key_five_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _DEFAULT:
-            case _MUSIC:
-                unregister_code(KC_MUTE);
-                break;
-            case _WINDOWS:
-                unregister_code16(C(KC_UP));
-                break;
-            case _THREE:
-                layer_three_actions(5, true);
-                break;
-        }
+        key_switch(5, true);
     }
     key_five_tap_state.state = TD_NONE;
 }
@@ -800,29 +822,7 @@ void key_six_finished(qk_tap_dance_state_t *state, void *user_data) {
     switch (key_six_tap_state.state) {
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            switch (get_layer()) {
-                case _DEFAULT:
-                    // Hide all windows
-                    tap_code16(G(A(KC_H)));
-                    break;
-                case _WINDOWS:
-                    register_code(KC_ESC);
-                    break;
-                case _VIM:
-                    vim_actions(6);
-                    break;
-                case _THREE:
-                    layer_three_actions(6, false);
-                    break;
-                case _META:
-                    meta_actions(6);
-                    break;
-                case _MUSIC:
-                    // Hide all windows
-                    tap_code16(G(C(KC_M)));
-                    tap_code16(G(A(KC_H)));
-                    break;
-            }
+            key_switch(6, false);
             break;
         case TD_DOUBLE_TAP:
             if (layer_state_is(_META)) {
@@ -840,18 +840,7 @@ void key_six_finished(qk_tap_dance_state_t *state, void *user_data) {
 void key_six_reset(qk_tap_dance_state_t *state, void *user_data) {
     // If the key was held down and now is released then switch off the layer
     if (key_six_tap_state.state == TD_SINGLE_HOLD || key_six_tap_state.state == TD_SINGLE_TAP) {
-        switch (get_layer()) {
-            case _WINDOWS:
-                register_code(KC_ESC);
-                break;
-            case _THREE:
-                layer_three_actions(6, true);
-                break;
-            case _META:
-            case _RESET:
-                layer_move(_META);
-                break;
-        }
+        key_switch(6, true);
     }
     key_six_tap_state.state = TD_NONE;
 }
