@@ -271,7 +271,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             break;
         case _MUSIC:
             rgb_matrix_set_color(2, 255, 168, 0);
-            rgb_matrix_set_color(3, 255, 168, 0);
+            rgb_matrix_set_color(5, 255, 168, 0);
             break;
         default:
             rgb_matrix_set_color(led_indices[layer-1], 255, 168, 0);
@@ -312,13 +312,15 @@ void default_actions(int key_idx, bool release) {
             tap_code(KC_MNXT);
             break;
         case 4:
-            layer_move(_MUSIC);
+            // Switch to Kitty and hide other windows
+            tap_code16(G(C(KC_M)));
+            tap_code16(G(A(KC_H)));
             break;
         case 5:
             tap_code(KC_MUTE);
             break;
         case 6:
-            tap_code16(G(A(KC_H)));
+            layer_move(_MUSIC);
             break;
     }
 }
@@ -375,26 +377,6 @@ void layer_two_actions(int key_idx, bool release) {
 void layer_three_actions(int key_idx, bool release) {}
 
 void layer_four_actions(int key_idx, bool release) {
-    switch (key_idx) {
-        case 1:
-            tap_code16(G(S(KC_DEL))); // Rotate monitor
-            break;
-        case 2:
-            tap_code16(G(A(KC_RBRC))); // toggle system theme
-            break;
-        case 3:
-            tap_code16(G(C(KC_Q))); // lock screen
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
-            break;
-    }
-}
-
-void layer_five_actions(int key_idx, bool release) {
     if (release) return;
 
     switch (key_idx) {
@@ -419,6 +401,26 @@ void layer_five_actions(int key_idx, bool release) {
             tap_code16(G(KC_T));
             tap_code16(G(KC_V));
             tap_code(KC_ENT);
+            break;
+    }
+}
+
+void layer_five_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 1:
+            tap_code16(G(S(KC_DEL))); // Rotate monitor
+            break;
+        case 2:
+            tap_code16(G(A(KC_RBRC))); // toggle system theme
+            break;
+        case 3:
+            tap_code16(G(C(KC_Q))); // lock screen
+            break;
+        case 4:
+            break;
+        case 5:
+            break;
+        case 6:
             break;
     }
 }
@@ -467,27 +469,22 @@ void layer_seven_actions(int key_idx, bool release) {
 
 // some spotify actions
 void layer_eight_actions(int key_idx, bool release) {
+    if (key_idx == 6 && release)
+        layer_move(_DEFAULT);
     if (release) return;
+
     switch (key_idx) {
         case 1:
             tap_code16(G(KC_S)); // shuffle
             break;
         case 2:
-            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
-            break;
-        case 3:
             tap_code16(G(KC_R)); // repeat
             break;
         case 4:
-            layer_move(_DEFAULT);
+            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
             break;
         case 5:
             tap_code(KC_BSPC); // delete for removing a song from the playlist
-            break;
-        case 6:
-            // Switch to Kitty and hide other windows
-            tap_code16(G(C(KC_M)));
-            tap_code16(G(A(KC_H)));
             break;
     }
 }
