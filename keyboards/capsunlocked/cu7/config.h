@@ -72,7 +72,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 // disable effects
 #define DISABLE_RGB_MATRIX_HUE_WAVE
 #define DISABLE_RGB_MATRIX_HUE_PENDULUM
-// #define DISABLE_RGB_MATRIX_HUE_BREATHING
+#define DISABLE_RGB_MATRIX_HUE_BREATHING
 #define DISABLE_RGB_MATRIX_RAINDROPS
 #define DISABLE_RGB_MATRIX_JELLYBEAN_RAINDROPS
 #define DISABLE_RGB_MATRIX_DUAL_BEACON

@@ -16,10 +16,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 #include QMK_KEYBOARD_H
 
-// enum my_keycodes {
-//   RM_TOG = SAFE_RANGE,
-// };
-
 // layers
 #define _DEFAULT 0
 #define _ONE 1
@@ -155,20 +151,20 @@ void rgb_encoder(bool clockwise) {
     }
 }
 
-// lt_flag
-// 0 - undo/redo
-// 1 - jumplist
-// 2 - browser tab management
-// 4 - search targets n/N
-int lt_flag = 0;
+// ltwo_flag
+// 0 - mouse scroll wheel
+// 1 - vim jumplist
+// 2 - vim search targets n/N
+// 3 - vim undo/redo
+int ltwo_flag = 0;
 
 void vim_encoder(bool clockwise) {
-    switch (lt_flag) {
+    switch (ltwo_flag) {
         case 0:
             if (clockwise) {
-                  tap_code16(C(KC_R));
-              } else {
-                  tap_code(KC_U);
+                tap_code(KC_WH_D);
+            } else {
+                tap_code(KC_WH_U);
             }
             break;
         case 1:
@@ -180,16 +176,16 @@ void vim_encoder(bool clockwise) {
             break;
         case 2:
             if (clockwise) {
-                tap_code16(C(KC_TAB));
-            } else {
-                tap_code16(C(S(KC_TAB)));
-            }
-            break;
-        case 4:
-            if (clockwise) {
                 tap_code(KC_N);
             } else {
                 tap_code16(S(KC_N));
+            }
+            break;
+        case 3:
+            if (clockwise) {
+                  tap_code16(C(KC_R));
+              } else {
+                  tap_code(KC_U);
             }
             break;
     }
@@ -221,10 +217,12 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             vim_encoder(clockwise);
             break;
         case _THREE:
+            break;
+        case _FIVE:
             if (clockwise) {
-                  tap_code(KC_WH_D);
-              } else {
-                  tap_code(KC_WH_U);
+                tap_code16(C(KC_TAB));
+            } else {
+                tap_code16(C(S(KC_TAB)));
             }
             break;
         case _META:
@@ -257,8 +255,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     switch (layer) {
         case _TWO:
             rgb_matrix_set_color(1, 255, 168, 0);
-            if (lt_flag) {
-                rgb_matrix_set_color(led_indices[lt_flag - 1], 0, 108, 255);
+            if (ltwo_flag) {
+                rgb_matrix_set_color(led_indices[ltwo_flag - 1], 0, 108, 255);
             }
             break;
         case _META:
@@ -356,136 +354,25 @@ void layer_one_actions(int key_idx, bool release) {
             }
             break;
         case 6:
-            if (release) {
-                unregister_code(KC_ESC);
-            } else {
-                register_code(KC_ESC);
-            }
+            if (!release)
+            tap_code16(G(A(KC_V)));
             break;
     }
 }
 
 void layer_two_actions(int key_idx, bool release) {
     if (release) return;
-    switch (key_idx) {
-        case 1:
-            switch (lt_flag) {
-                case 2:
-                    tap_code16(C(S(KC_TAB)));
-                    break;
-                case 4:
-                    tap_code16(S(KC_N));
-                    break;
-                case 5: // tmux windows
-                    tap_code16(C(KC_A));
-                    tap_code(KC_P);
-                    break;
-                default:
-                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 2:
-            lt_flag = lt_flag == key_idx ? 0 : key_idx;
-            break;
-        case 3:
-            switch (lt_flag) {
-                case 2:
-                    tap_code16(C(KC_TAB));
-                    break;
-                case 4:
-                    tap_code(KC_N);
-                    break;
-                case 5: // tmux windows
-                    tap_code16(C(KC_A));
-                    tap_code(KC_N);
-                    break;
-                default:
-                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 4:
-            switch (lt_flag) {
-                case 2:
-                    tap_code16(G(KC_R)); // page refresh
-                    break;
-                default:
-                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 5:
-            switch (lt_flag) {
-                case 2:
-                    tap_code16(G(S(KC_T)));
-                    break;
-                default:
-                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 6:
-            switch (lt_flag) {
-                case 2:
-                    tap_code16(G(KC_W)); // close window
-                    break;
-                default:
-                    lt_flag = lt_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        default:
-            break;
-    }
+        switch (key_idx) {
+            case 1:
+            case 2:
+            case 3:
+                ltwo_flag = ltwo_flag == key_idx ? 0 : key_idx;
+                break;
+        }
 }
 
-void layer_three_actions(int key_idx, bool release) {
-    switch (key_idx) {
-        case 1:
-            if (release) {
-                unregister_code(KC_BTN2);
-            } else {
-                register_code(KC_BTN2);
-            }
-            break;
-        case 2:
-            if (release) {
-                unregister_code(KC_UP);
-            } else {
-                register_code(KC_UP);
-            }
-            break;
-        case 3:
-            if (release) {
-                unregister_code(KC_BTN1);
-            } else {
-                register_code(KC_BTN1);
-            }
-            break;
-        case 4:
-            if (release) {
-                unregister_code(KC_LEFT);
-            } else {
-                register_code(KC_LEFT);
-            }
-            break;
-        case 5:
-            if (release) {
-                unregister_code(KC_DOWN);
-            } else {
-                register_code(KC_DOWN);
-            }
-            break;
-        case 6:
-            if (release) {
-                unregister_code(KC_RGHT);
-            } else {
-                register_code(KC_RGHT);
-            }
-            break;
-    }
-}
+// NOTE: Room for activities
+void layer_three_actions(int key_idx, bool release) {}
 
 void layer_four_actions(int key_idx, bool release) {
     switch (key_idx) {
@@ -512,21 +399,26 @@ void layer_five_actions(int key_idx, bool release) {
 
     switch (key_idx) {
         case 1:
+            tap_code16(C(S(KC_TAB))); // previous tab
             break;
         case 2:
+            tap_code16(G(KC_W)); // close tab
             break;
         case 3:
+            tap_code16(C(KC_TAB)); // next tab
+            break;
+        case 4:
+            tap_code16(G(S(KC_T))); // reopen last closed tab
+            break;
+        case 5:
+            tap_code16(G(KC_R)); // refresh
+            break;
+        case 6:
             // copy, open new tab, paste, enter
             tap_code16(G(KC_C));
             tap_code16(G(KC_T));
             tap_code16(G(KC_V));
             tap_code(KC_ENT);
-            break;
-        case 4:
-            break;
-        case 5:
-            break;
-        case 6:
             break;
     }
 }
@@ -578,19 +470,19 @@ void layer_eight_actions(int key_idx, bool release) {
     if (release) return;
     switch (key_idx) {
         case 1:
-            tap_code16(G(KC_S));
+            tap_code16(G(KC_S)); // shuffle
             break;
         case 2:
             tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
             break;
         case 3:
-            tap_code16(G(KC_R));
+            tap_code16(G(KC_R)); // repeat
             break;
         case 4:
             layer_move(_DEFAULT);
             break;
         case 5:
-            tap_code(KC_BSPC);
+            tap_code(KC_BSPC); // delete for removing a song from the playlist
             break;
         case 6:
             // Switch to Kitty and hide other windows
@@ -688,7 +580,7 @@ void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
                 layer_move(_DEFAULT);
             } else {
                 layer_move(_TWO);
-                lt_flag = 0; // reset flag
+                ltwo_flag = 0; // reset flag
             }
             break;
         default:
