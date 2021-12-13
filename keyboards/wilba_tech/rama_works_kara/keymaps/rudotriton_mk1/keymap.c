@@ -393,13 +393,13 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
     switch (get_highest_layer(state)) {
         case _SYMBOLS:
-            rgb_matrix_sethsv_noeeprom(30, 200, value);
+            rgb_matrix_sethsv_noeeprom(163, 255, value);
             break;
         case _NUMPAD:
-            rgb_matrix_sethsv_noeeprom(0, 150, value);
+            rgb_matrix_sethsv_noeeprom(205, 235, value);
             break;
         case _MOUSE:
-            rgb_matrix_sethsv_noeeprom(120, 150, value);
+            rgb_matrix_sethsv_noeeprom(115, 255, value);
             break;
         case _FNONE:
             rgb_matrix_sethsv_noeeprom(236, 255, value);
