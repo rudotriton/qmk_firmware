@@ -96,7 +96,7 @@ bool is_cmd_tab_active = false;
 uint16_t cmd_tab_timer = 0;
 
 // rgb_flag
-// 0 - brightness
+// 0 - screen brightness
 // 1 - hue
 // 2 - saturation
 // 3 - value
@@ -398,6 +398,7 @@ void layer_four_actions(int key_idx, bool release) {
         case 6:
             // copy, open new tab, paste, enter
             tap_code16(G(KC_C));
+            tap_code16(G(A(KC_J))); // launch ff w/ BTT
             tap_code16(G(KC_T));
             tap_code16(G(KC_V));
             tap_code(KC_ENT);
@@ -429,35 +430,11 @@ void layer_six_actions(int key_idx, bool release) {
     if (release) return;
 
     switch (key_idx) {
-        case 1:
-            switch (rgb_flag) {
-                case 4:
-                    // next mode
-                    rgb_matrix_step_noeeprom();
-                    break;
-                default:
-                    rgb_flag = rgb_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 3:
-            switch (rgb_flag) {
-                case 4:
-                    // prev mode
-                    rgb_matrix_step_reverse_noeeprom();
-                    break;
-                default:
-                    rgb_flag = rgb_flag == key_idx ? 0 : key_idx;
-                    break;
-            }
-            break;
-        case 2:
-        case 4:
-        case 5:
-            rgb_flag = rgb_flag == key_idx ? 0 : key_idx;
-            break;
         case 6:
             layer_move(_RESET);
+            break;
+        default:
+            rgb_flag = rgb_flag == key_idx ? 0 : key_idx;
             break;
     }
 }
@@ -529,19 +506,20 @@ static td_tap_t key_one_tap_state = {
     .state = TD_NONE
 };
 
-void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_one_tap_state.state = cur_dance(state);
-    switch (key_one_tap_state.state) {
-        // NOTE: TOP LEFT KEY
+void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer) (void)) {
+    key_tap_state->state = cur_dance(state);
+    switch (key_tap_state->state) {
         case TD_SINGLE_HOLD:
         case TD_SINGLE_TAP:
-            key_switch(1, false);
+            key_switch(key_idx, false);
             break;
         case TD_DOUBLE_TAP:
-            if (layer_state_is(_ONE)) {
+            if (layer_state_is(target_layer)) {
                 layer_move(_DEFAULT);
             } else {
-                layer_move(_ONE);
+                layer_move(target_layer);
+                if (setup_layer != NULL)
+                setup_layer();
             }
             break;
         default:
@@ -549,8 +527,11 @@ void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
     }
 }
 
+void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
+    key_finished(&key_one_tap_state, state, 1, _ONE, NULL);
+}
+
 void key_one_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_one_tap_state.state == TD_SINGLE_HOLD || key_one_tap_state.state == TD_SINGLE_TAP) {
         key_switch(1, true);
     }
@@ -563,30 +544,16 @@ static td_tap_t key_two_tap_state = {
     .state = TD_NONE
 };
 
+void setup_l_two(void) {
+    ltwo_flag = 0;
+}
+
 // Functions that control what our tap dance key does
 void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_two_tap_state.state = cur_dance(state);
-    switch (key_two_tap_state.state) {
-        // NOTE: TOP MIDDLE KEY
-        case TD_SINGLE_HOLD:
-        case TD_SINGLE_TAP:
-            key_switch(2, false);
-            break;
-        case TD_DOUBLE_TAP:
-            if (layer_state_is(_TWO)) {
-                layer_move(_DEFAULT);
-            } else {
-                layer_move(_TWO);
-                ltwo_flag = 0; // reset flag
-            }
-            break;
-        default:
-            break;
-    }
+    key_finished(&key_two_tap_state, state, 2, _TWO, setup_l_two);
 }
 
 void key_two_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_two_tap_state.state == TD_SINGLE_HOLD || key_two_tap_state.state == TD_SINGLE_TAP) {
         key_switch(2, true);
     }
@@ -601,33 +568,15 @@ static td_tap_t key_three_tap_state = {
 
 // Functions that control what our tap dance key does
 void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_three_tap_state.state = cur_dance(state);
-    switch (key_three_tap_state.state) {
-        // NOTE: TOP RIGHT KEY
-        case TD_SINGLE_HOLD:
-        case TD_SINGLE_TAP:
-            key_switch(3, false);
-            break;
-        case TD_DOUBLE_TAP:
-            if (layer_state_is(_THREE)) {
-                layer_move(_DEFAULT);
-            } else {
-                layer_move(_THREE);
-            }
-            break;
-        default:
-            break;
-    }
+    key_finished(&key_three_tap_state, state, 3, _THREE, NULL);
 }
 
 void key_three_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_three_tap_state.state == TD_SINGLE_HOLD || key_three_tap_state.state == TD_SINGLE_TAP) {
         key_switch(3, true);
     }
     key_three_tap_state.state = TD_NONE;
 }
-
 
 // NOTE: FOUR
 static td_tap_t key_four_tap_state = {
@@ -637,33 +586,15 @@ static td_tap_t key_four_tap_state = {
 
 // Functions that control what our tap dance key does
 void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_four_tap_state.state = cur_dance(state);
-    switch (key_four_tap_state.state) {
-        // NOTE: BOTTOM LEFT KEY
-        case TD_SINGLE_HOLD:
-        case TD_SINGLE_TAP:
-            key_switch(4, false);
-            break;
-        case TD_DOUBLE_TAP:
-            if (layer_state_is(_FOUR)) {
-                layer_move(_DEFAULT);
-            } else {
-                layer_move(_FOUR);
-            }
-            break;
-        default:
-            break;
-    }
+    key_finished(&key_four_tap_state, state, 4, _FOUR, NULL);
 }
 
 void key_four_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_four_tap_state.state == TD_SINGLE_HOLD || key_four_tap_state.state == TD_SINGLE_TAP) {
         key_switch(4, true);
     }
     key_four_tap_state.state = TD_NONE;
 }
-
 
 // NOTE: FIVE
 static td_tap_t key_five_tap_state = {
@@ -673,27 +604,10 @@ static td_tap_t key_five_tap_state = {
 
 // Functions that control what our tap dance key does
 void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_five_tap_state.state = cur_dance(state);
-    switch (key_five_tap_state.state) {
-        // NOTE: BOTTOM MIDDLE KEY
-        case TD_SINGLE_HOLD:
-        case TD_SINGLE_TAP:
-            key_switch(5, false);
-            break;
-        case TD_DOUBLE_TAP:
-            if (layer_state_is(_FIVE)) {
-                layer_move(_DEFAULT);
-            } else {
-                layer_move(_FIVE);
-            }
-            break;
-        default:
-            break;
-    }
+    key_finished(&key_five_tap_state, state, 5, _FIVE, NULL);
 }
 
 void key_five_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_five_tap_state.state == TD_SINGLE_HOLD || key_five_tap_state.state == TD_SINGLE_TAP) {
         key_switch(5, true);
     }
@@ -706,28 +620,15 @@ static td_tap_t key_six_tap_state = {
     .state = TD_NONE
 };
 
+void setup_l_six(void) {
+    rgb_flag = 0;
+}
+
 void key_six_finished(qk_tap_dance_state_t *state, void *user_data) {
-    key_six_tap_state.state = cur_dance(state);
-    switch (key_six_tap_state.state) {
-        case TD_SINGLE_HOLD:
-        case TD_SINGLE_TAP:
-            key_switch(6, false);
-            break;
-        case TD_DOUBLE_TAP:
-            if (layer_state_is(_META)) {
-                layer_move(_DEFAULT);
-            } else {
-                layer_move(_META);
-                rgb_flag = 0; // brightness setting
-            }
-            break;
-        default:
-            break;
-    }
+    key_finished(&key_six_tap_state, state, 6, _META, setup_l_six);
 }
 
 void key_six_reset(qk_tap_dance_state_t *state, void *user_data) {
-    // If the key was held down and now is released then switch off the layer
     if (key_six_tap_state.state == TD_SINGLE_HOLD || key_six_tap_state.state == TD_SINGLE_TAP) {
         key_switch(6, true);
     }
@@ -743,4 +644,3 @@ qk_tap_dance_action_t tap_dance_actions[] = {
     [TD_L_05] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_five_finished, key_five_reset),
     [TD_L_06] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_six_finished, key_six_reset),
 };
-
