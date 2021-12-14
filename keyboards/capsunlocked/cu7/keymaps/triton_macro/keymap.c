@@ -69,26 +69,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 };
 
 int get_layer(void) {
-  if (layer_state_is(_DEFAULT)) {
-      return _DEFAULT;
-  } else if (layer_state_is(_ONE)) {
-      return _ONE;
-  } else if (layer_state_is(_TWO)) {
-      return _TWO;
-  } else if (layer_state_is(_THREE)) {
-      return _THREE;
-  } else if (layer_state_is(_FOUR)) {
-      return _FOUR;
-  } else if (layer_state_is(_FIVE)) {
-      return _FIVE;
-  } else if (layer_state_is(_META)) {
-      return _META;
-  } else if (layer_state_is(_RESET)) {
-      return _RESET;
-  } else if (layer_state_is(_MUSIC)) {
-      return _MUSIC;
-  }
-  return -1;
+    for (int i = _DEFAULT; i <= _MUSIC; i++) {
+        if (layer_state_is(i)) return i;
+    }
+    return -1;
 }
 
 // variables for cmd tabbing
@@ -286,17 +270,6 @@ void keyboard_post_init_user(void) {
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
 }
 
-// Determine the current tap dance state
-td_state_t cur_dance(qk_tap_dance_state_t *state) {
-  if (state->count == 1) {
-        if (state->interrupted || !state->pressed)
-            return TD_SINGLE_TAP;
-        // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
-        else return TD_SINGLE_HOLD;
-    } else if (state->count == 2) return TD_DOUBLE_TAP;
-    else return TD_UNKNOWN;
-}
-
 // NOTE: Layer actions
 
 void default_actions(int key_idx, bool release) {
@@ -466,45 +439,34 @@ void layer_eight_actions(int key_idx, bool release) {
     }
 }
 
+void (*layer_actions[9]) (int, bool) = {
+    default_actions,
+    layer_one_actions,
+    layer_two_actions,
+    layer_three_actions,
+    layer_four_actions,
+    layer_five_actions,
+    layer_six_actions,
+    layer_seven_actions,
+    layer_eight_actions
+};
+
 void key_switch(int key_idx, bool release) {
-    switch (get_layer()) {
-        case 0:
-            default_actions(key_idx, release);
-            break;
-        case 1:
-            layer_one_actions(key_idx, release);
-            break;
-        case 2:
-            layer_two_actions(key_idx, release);
-            break;
-        case 3:
-            layer_three_actions(key_idx, release);
-            break;
-        case 4:
-            layer_four_actions(key_idx, release);
-            break;
-        case 5:
-            layer_five_actions(key_idx, release);
-            break;
-        case 6:
-            layer_six_actions(key_idx, release);
-            break;
-        case 7:
-            layer_seven_actions(key_idx, release);
-            break;
-        case 8:
-            layer_eight_actions(key_idx, release);
-            break;
-    }
+    (*layer_actions[get_layer()]) (key_idx, release);
 }
 
 // NOTE: START OF TAPDANCES
 
-// NOTE: ONE
-static td_tap_t key_one_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+// Determine the current tap dance state
+td_state_t cur_dance(qk_tap_dance_state_t *state) {
+  if (state->count == 1) {
+        if (state->interrupted || !state->pressed)
+            return TD_SINGLE_TAP;
+        // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
+        else return TD_SINGLE_HOLD;
+    } else if (state->count == 2) return TD_DOUBLE_TAP;
+    else return TD_UNKNOWN;
+}
 
 void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer) (void)) {
     key_tap_state->state = cur_dance(state);
@@ -526,6 +488,12 @@ void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_
             break;
     }
 }
+
+// NOTE: ONE
+static td_tap_t key_one_tap_state = {
+    .is_press_action = true,
+    .state = TD_NONE
+};
 
 void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
     key_finished(&key_one_tap_state, state, 1, _ONE, NULL);
