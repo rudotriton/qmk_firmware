@@ -308,9 +308,9 @@ void layer_one_actions(int key_idx, bool release) {
             if (is_cmd_tab_active && !release) {
                 tap_code(KC_ENT); // allow bypassing the timeout
             } else if (release) {
-                unregister_code16(KC_F11);
+                unregister_code16(C(KC_UP));
             } else {
-                register_code16(KC_F11);
+                register_code16(C(KC_UP));
             }
             break;
         case 3:
@@ -319,19 +319,21 @@ void layer_one_actions(int key_idx, bool release) {
             break;
         case 4:
             if (!release)
-            tap_code16(G(A(KC_E)));
-            break;
-        case 5:
-            if (release) {
-                unregister_code16(C(KC_UP));
-            } else {
-                register_code16(C(KC_UP));
-            }
-            break;
-        case 6:
-            if (!release)
             tap_code16(G(A(KC_V)));
             break;
+        case 5:
+            if (release)
+            unregister_code16(C(KC_DOWN));
+            else
+            register_code16(C(KC_DOWN));
+            break;
+        case 6:
+            if (release)
+            unregister_code16(KC_F11);
+            else
+            register_code16(KC_F11);
+            break;
+
     }
 }
 
