@@ -295,15 +295,10 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(_NUMPAD, KC_R): // vim double-tap replace with number
-            return true;
         case LT(_NUMPAD, KC_S): // same, but for qwerty keeb
-            return true;
         case LT(_SYMBOLS, KC_T): // jump to symbol
-            return true;
         case LT(_SYMBOLS, KC_F): // qwerty, jump onto a symbol
-            return true;
         case LT(_SYMBOLS, KC_N): // things ending in n, followed by a symbol
-            return true;
         case LT(_SYMBOLS, KC_J): // qwerty equivalent
             return true;
         default:

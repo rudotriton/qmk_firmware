@@ -202,7 +202,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             break;
         case _THREE:
             break;
-        case _FIVE:
+        case _FOUR:
             if (clockwise) {
                 tap_code16(C(KC_TAB));
             } else {
