@@ -172,6 +172,13 @@ void vim_encoder(bool clockwise) {
                   tap_code(KC_U);
             }
             break;
+        case 4:
+            if (clockwise) {
+                  tap_code(KC_WH_R);
+              } else {
+                  tap_code(KC_WH_L);
+            }
+            break;
     }
 }
 
@@ -343,6 +350,7 @@ void layer_two_actions(int key_idx, bool release) {
             case 1:
             case 2:
             case 3:
+            case 4:
                 ltwo_flag = ltwo_flag == key_idx ? 0 : key_idx;
                 break;
         }
