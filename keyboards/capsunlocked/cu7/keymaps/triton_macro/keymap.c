@@ -390,9 +390,11 @@ void layer_four_actions(int key_idx, bool release) {
 }
 
 void layer_five_actions(int key_idx, bool release) {
+    if (release) return;
+
     switch (key_idx) {
         case 1:
-            tap_code16(G(S(KC_DEL))); // Rotate monitor
+            tap_code16(G(S(KC_DEL))); // hammerspoon: rotate monitor
             break;
         case 2:
             tap_code16(G(A(KC_RBRC))); // toggle system theme
@@ -401,6 +403,7 @@ void layer_five_actions(int key_idx, bool release) {
             tap_code16(G(C(KC_Q))); // lock screen
             break;
         case 4:
+            tap_code16(G(S(KC_BSLS))); // hammerspoon: fix monitors
             break;
         case 5:
             break;
