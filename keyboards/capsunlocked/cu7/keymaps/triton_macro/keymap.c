@@ -373,10 +373,10 @@ void layer_four_actions(int key_idx, bool release) {
             tap_code16(C(KC_TAB)); // next tab
             break;
         case 4:
-            tap_code16(G(S(KC_T))); // reopen last closed tab
+            tap_code16(G(KC_R)); // refresh
             break;
         case 5:
-            tap_code16(G(KC_R)); // refresh
+            tap_code16(G(S(KC_T))); // reopen last closed tab
             break;
         case 6:
             // copy, open new tab, paste, enter
