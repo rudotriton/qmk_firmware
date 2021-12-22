@@ -65,7 +65,8 @@
 #define LOCKING_RESYNC_ENABLE
 
 // disable backlight when USB suspended (PC sleep/hibernate/shutdown)
-#define RGB_BACKLIGHT_DISABLE_WHEN_USB_SUSPENDED 0
+#define RGB_DISABLE_WHEN_USB_SUSPENDED true
+// #define RGB_DISABLE_TIMEOUT 600000 // 10 minutes
 
 // disable effects
 #define DISABLE_RGB_MATRIX_HUE_WAVE

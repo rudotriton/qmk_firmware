@@ -8,3 +8,7 @@
   - it really doesn't matter though
 - remove the led testing code and keys on `_FNBOTH`
 - should the `TO`s be `DF`s for changing default layers?
+
+## suspend and LEDs
+
+I have my keyboards connected through my monitor, so when the monitor is off, they turn off as well, so far so good. The port on the side of the monitor seems to stay on when the monitor is off, e.g. I can charge my phone. However, my keyboard doesn't work when connected to it and the monitor is off, but its LEDs stay on. It also doesn't seem to be in a suspend state, because the suspend code isn't run.
