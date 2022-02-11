@@ -294,6 +294,7 @@ void default_actions(int key_idx, bool release) {
             break;
         case 4:
             // Switch to Kitty and hide other windows
+            tap_code(KC_ESC);
             tap_code16(G(C(KC_M)));
             tap_code16(G(A(KC_H)));
             break;
