@@ -360,6 +360,7 @@ void layer_two_actions(int key_idx, bool release) {
 }
 
 // NOTE: Room for activities
+// NOTE: right now it seems to be set for youtube
 void layer_three_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
