@@ -335,7 +335,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(38, 73, 255, 143);
     }
 
-    // 6-11, 7-10, 8-9, 4-13, 5-12,9-18
+    // 1-16, 2-15, 3-14, 4-13, 5-12, 6-11, 7-10, 8-9, ,9-18
     if (color_layers && color_indicators) {
       if (layer_state_is(_FNBOTH)) {
           rgb_matrix_set_color(18, 255, 73, 173);
@@ -343,6 +343,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(10, 255, 168, 0);
       } else if (layer_state_is(_FNTWO)) {
           rgb_matrix_set_color(9, 255, 168, 0);
+      } else if (layer_state_is(_QWERTYM)) {
+          rgb_matrix_set_color(16, 255, 168, 0);
+      } else if (layer_state_is(_COLEMAK)) {
+          rgb_matrix_set_color(15, 255, 168, 0);
+      } else if (layer_state_is(_QWERTY)) {
+          rgb_matrix_set_color(14, 255, 168, 0);
       } else if (layer_state_is(_SYMBOLS)) {
           rgb_matrix_set_color(13, 255, 168, 0);
       } else if (layer_state_is(_NUMPAD)) {
