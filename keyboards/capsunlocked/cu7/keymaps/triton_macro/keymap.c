@@ -428,7 +428,7 @@ void layer_four_actions(int key_idx, bool release) {
         case 6:
             // copy, open new tab, paste, enter
             tap_code16(G(KC_C));
-            tap_code16(G(A(KC_J))); // launch ff w/ BTT
+            tap_code16(G(A(KC_J))); // launch firefox w/ betterTouchTool
             tap_code16(G(KC_T));
             tap_code16(G(KC_V));
             tap_code(KC_ENT);
@@ -441,20 +441,18 @@ void layer_five_actions(int key_idx, bool release) {
 
     switch (key_idx) {
         case 1:
-            tap_code16(G(S(KC_DEL))); // hammerspoon: rotate monitor
             break;
         case 2:
-            tap_code16(G(A(KC_RBRC))); // toggle system theme
             break;
         case 3:
-            tap_code16(G(C(KC_Q))); // lock screen
             break;
         case 4:
-            tap_code16(G(S(KC_BSLS))); // hammerspoon: fix monitors
             break;
         case 5:
+            tap_code16(G(A(KC_RBRC))); // toggle system theme
             break;
         case 6:
+            tap_code16(G(C(KC_Q))); // lock screen
             break;
     }
 }
