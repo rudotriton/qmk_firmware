@@ -43,9 +43,10 @@ enum my_keycodes {
 #define _SYMBOLS 4
 #define _NUMPAD 5
 #define _MOUSE 6
-#define _FNONE 7
-#define _FNTWO 8
-#define _FNBOTH 9
+#define _MIDI 7
+#define _FNONE 8
+#define _FNTWO 9
+#define _FNBOTH 10
 
 // 0 - colemak with homerow mods
 // 1 - qwerty with homerow mods
@@ -54,9 +55,10 @@ enum my_keycodes {
 // 4 - symbols
 // 5 - numpad
 // 6 - mouse layer
-// 7 - function one media layer
-// 8 - function two hsv controls
-// 9 - function both
+// 7 - midi layer
+// 8 - function one media layer
+// 9 - function two hsv controls
+// 10 - function both
 
 typedef enum {
   TD_NONE,
@@ -128,6 +130,13 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, XXXXXXX, KC_WH_L, XXXXXXX, KC_WH_R, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
+  [_MIDI] = LAYOUT_60_hhkb(
+  KC_TRNS,   MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  MI_LEG,    MI_MOD, MI_Cs, MI_Ds, XXXXXXX, MI_Fs, MI_Gs, MI_As, XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, XXXXXXX,
+  MI_ALLOFF, MI_C,    MI_D,  MI_E, MI_F, MI_G, MI_A, MI_B, MI_C_1, MI_D_1, MI_E_1, MI_F_1, XXXXXXX,
+  MI_SOFT,   MI_PORT, MI_SOST, MI_VELD, MI_OCTD, XXXXXXX, MI_OCTU, MI_VELU, XXXXXXX, XXXXXXX, XXXXXXX, MI_SOFT, KC_TRNS,
+  KC_TRNS,   KC_TRNS,                            MI_SUS,                            KC_TRNS, KC_TRNS),
+
   [_FNONE] = LAYOUT_60_hhkb(
   KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_INS,  XXXXXXX,
   XXXXXXX, XXXXXXX, XXXXXXX, KC_MPRV, KC_MNXT, XXXXXXX, XXXXXXX, XXXXXXX, KC_PSCR, KC_SLCK, KC_PAUS, KC_UP,   XXXXXXX, KC_DEL,
@@ -136,7 +145,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_FNTWO] = LAYOUT_60_hhkb(
-  TO(_COLEMAKM), TO(_QWERTYM), TO(_COLEMAK), TO(_QWERTY), TO(_SYMBOLS), TO(_NUMPAD), TO(_MOUSE), TO(_FNONE), TO(_FNTWO), TO(_FNBOTH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  TO(_COLEMAKM), TO(_QWERTYM), TO(_COLEMAK), TO(_QWERTY), TO(_SYMBOLS), TO(_NUMPAD), TO(_MOUSE), TO(_MIDI),  TO(_FNONE), TO(_FNTWO), TO(_FNBOTH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX,       RM_MOD,       RM_RMOD,      RM_HDE,      RM_HIN,     RM_SPD,     RM_SPI,      RM_TOG,       RM_ICL,      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX,       KC_SLCK,      KC_PAUS,      RM_SDE,      RM_SIN,     XXXXXXX,    XXXXXXX,     XXXXXXX,      XXXXXXX,     RM_LCL, XXXXXXX, XXXXXXX, XXXXXXX,
   KC_TRNS,       KC_BRIU,      KC_BRID,      RM_VDE,      RM_VIN,     XXXXXXX,    XXXXXXX,     RM_MCL,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
@@ -335,14 +344,14 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(38, 73, 255, 143);
     }
 
-    // 1-16, 2-15, 3-14, 4-13, 5-12, 6-11, 7-10, 8-9, ,9-18
+    // 1-16, 2-15, 3-14, 4-13, 5-12, 6-11, 7-10, 8-9, ,9-18, 10-19
     if (color_layers && color_indicators) {
       if (layer_state_is(_FNBOTH)) {
-          rgb_matrix_set_color(18, 255, 73, 173);
+          rgb_matrix_set_color(19, 255, 73, 173);
       } else if (layer_state_is(_FNONE)) {
-          rgb_matrix_set_color(10, 255, 168, 0);
-      } else if (layer_state_is(_FNTWO)) {
           rgb_matrix_set_color(9, 255, 168, 0);
+      } else if (layer_state_is(_FNTWO)) {
+          rgb_matrix_set_color(18, 255, 168, 0);
       } else if (layer_state_is(_QWERTYM)) {
           rgb_matrix_set_color(16, 255, 168, 0);
       } else if (layer_state_is(_COLEMAK)) {
@@ -355,6 +364,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(12, 255, 168, 0);
       } else if (layer_state_is(_MOUSE)) {
           rgb_matrix_set_color(11, 255, 168, 0);
+      } else if (layer_state_is(_MIDI)) {
+          rgb_matrix_set_color(10, 255, 168, 0);
       }
     }
 }
@@ -401,6 +412,9 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             break;
         case _MOUSE:
             rgb_matrix_sethsv_noeeprom(115, 255, value);
+            break;
+        case _MIDI:
+            rgb_matrix_sethsv_noeeprom(85, 255, value);
             break;
         case _FNONE:
             rgb_matrix_sethsv_noeeprom(236, 255, value);

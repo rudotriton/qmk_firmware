@@ -182,9 +182,9 @@ void vim_encoder(bool clockwise) {
     }
 }
 
-// Volume up/down on the encoder
 bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (get_layer()) {
+        // Volume up/down on the encoder
         case _DEFAULT:
             if (clockwise) {
                 tap_code(KC_VOLU);
@@ -192,6 +192,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code(KC_VOLD);
             }
             break;
+        // switch application
         case _ONE:
             if (!is_cmd_tab_active) {
                 is_cmd_tab_active = true;
@@ -208,6 +209,11 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             vim_encoder(clockwise);
             break;
         case _THREE:
+            if (clockwise) {
+                tap_code(KC_RGHT);
+            } else {
+                tap_code(KC_LEFT);
+            }
             break;
         case _FOUR:
             if (clockwise) {
@@ -365,42 +371,44 @@ void layer_three_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
             if (!release) {
-                register_code(KC_LEFT);
+                register_code(KC_1);
             } else {
-                unregister_code(KC_LEFT);
+                unregister_code(KC_1);
             }
             break;
         case 2:
             if (!release) {
-                register_code(KC_SPC);
+                register_code(KC_2);
             } else {
-                unregister_code(KC_SPC);
+                unregister_code(KC_2);
             }
             break;
         case 3:
             if (!release) {
-                register_code(KC_RGHT);
+                register_code(KC_3);
             } else {
-                unregister_code(KC_RGHT);
+                unregister_code(KC_3);
             }
             break;
         case 4:
             if (!release) {
-                register_code16(S(KC_COMM));
+                register_code(KC_4);
             } else {
-                unregister_code16(S(KC_COMM));
+                unregister_code(KC_4);
             }
             break;
         case 5:
             if (!release) {
+                register_code(KC_5);
             } else {
+                unregister_code(KC_5);
             }
             break;
         case 6:
             if (!release) {
-                register_code16(S(KC_DOT));
+                register_code(KC_SPC);
             } else {
-                unregister_code16(S(KC_DOT));
+                unregister_code(KC_SPC);
             }
             break;
     }

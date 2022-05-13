@@ -23,6 +23,8 @@ BACKLIGHT_ENABLE = no       # Enable keyboard backlight functionality
 RGBLIGHT_ENABLE = no        # Enable keyboard RGB underglow
 AUDIO_ENABLE = no           # Audio output
 
+MIDI_ENABLE = yes
+
 TAP_DANCE_ENABLE = yes
 
 LTO_ENABLE = yes # link time optimization, reduces compile size
