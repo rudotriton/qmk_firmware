@@ -21,8 +21,8 @@ enum my_keycodes {
   RM_LCL,
   RM_ICL,
   RM_MCL,
-  RM_MOD,
   RM_RMOD,
+  RM_MOD,
   RM_HDE,
   RM_HIN,
   RM_SDE,
@@ -36,29 +36,19 @@ enum my_keycodes {
   LED_DEBUG_TOG
 };
 
-#define _COLEMAKM 0
-#define _QWERTYM 1
-#define _COLEMAK 2
-#define _QWERTY 3
-#define _SYMBOLS 4
-#define _NUMPAD 5
-#define _MOUSE 6
-#define _MIDI 7
-#define _FNONE 8
-#define _FNTWO 9
-#define _FNBOTH 10
-
-// 0 - colemak with homerow mods
-// 1 - qwerty with homerow mods
-// 2 - colemak clean
-// 3 - qwerty clean
-// 4 - symbols
-// 5 - numpad
-// 6 - mouse layer
-// 7 - midi layer
-// 8 - function one media layer
-// 9 - function two hsv controls
-// 10 - function both
+enum layers {
+  _COLEMAKM,
+  _QWERTYM,
+  _COLEMAK,
+  _QWERTY,
+  _SYMBOLS,
+  _NUMPAD,
+  _MOUSE,
+  _MIDI,
+  _FNONE,
+  _FNTWO,
+  _FNBOTH
+};
 
 typedef enum {
   TD_NONE,
@@ -121,7 +111,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      KC_WBAK, KC_WFWD, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,  KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT_T(KC_SCLN), XXXXXXX, KC_TRNS,
   KC_TRNS, LCTL(KC_DOWN), LCTL(KC_LEFT),   LCTL(KC_RGHT), LCTL(KC_UP), KC_F11,  KC_0,    RCMD_T(KC_1), KC_2,         KC_3,         XXXXXXX,         KC_TRNS, KC_TRNS,
-  KC_TRNS, KC_TRNS,                            KC_ESC,                            KC_TRNS, KC_TRNS),
+  KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_MOUSE] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
@@ -146,9 +136,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_FNTWO] = LAYOUT_60_hhkb(
   TO(_COLEMAKM), TO(_QWERTYM), TO(_COLEMAK), TO(_QWERTY), TO(_SYMBOLS), TO(_NUMPAD), TO(_MOUSE), TO(_MIDI),  TO(_FNONE), TO(_FNTWO), TO(_FNBOTH), XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX,       RM_MOD,       RM_RMOD,      RM_HDE,      RM_HIN,     RM_SPD,     RM_SPI,      RM_TOG,       RM_ICL,      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX,       RM_RMOD,       RM_MOD,      RM_HDE,      RM_HIN,     RM_SPD,     RM_SPI,      RM_TOG,       RM_ICL,      XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX,       KC_SLCK,      KC_PAUS,      RM_SDE,      RM_SIN,     XXXXXXX,    XXXXXXX,     XXXXXXX,      XXXXXXX,     RM_LCL, XXXXXXX, XXXXXXX, XXXXXXX,
-  KC_TRNS,       KC_BRIU,      KC_BRID,      RM_VDE,      RM_VIN,     XXXXXXX,    XXXXXXX,     RM_MCL,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
+  KC_TRNS,       KC_BRID,      KC_BRIU,      RM_VDE,      RM_VIN,     XXXXXXX,    XXXXXXX,     RM_MCL,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_FNBOTH] = LAYOUT_60_hhkb(
@@ -171,9 +161,9 @@ void rgb_matrix_indicators_user(void) {
 
 uint8_t last_mode = RGB_MATRIX_SOLID_COLOR;
 int     hue, saturation, value, speed;
-bool    color_layers = true; // should we switch layer colors
-bool    color_indicators = true; // highlight layer indicator
-bool    color_meta = true; // highlight current pressed meta key
+bool    to_color_layers = true; // should we switch layer colors
+bool    to_color_indicators = true; // highlight layer indicator
+bool    to_color_meta = true; // highlight current pressed meta key
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
@@ -214,19 +204,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             break;
         case RM_LCL:
             if (record->event.pressed) {
-              color_layers = color_layers ? false : true;
+              to_color_layers = to_color_layers ? false : true;
             }
             return false;
             break;
         case RM_ICL:
             if (record->event.pressed) {
-              color_indicators = color_indicators ? false : true;
+              to_color_indicators = to_color_indicators ? false : true;
             }
             return false;
             break;
         case RM_MCL:
             if (record->event.pressed) {
-              color_meta = color_meta ? false : true;
+              to_color_meta = to_color_meta ? false : true;
             }
             return false;
             break;
@@ -320,7 +310,7 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
 // color caps lock green when caps is on
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
-    if (color_meta) {
+    if (to_color_meta) {
       if (host_keyboard_led_state().caps_lock) {
           rgb_matrix_set_color(8, 73, 255, 143);
       }
@@ -344,28 +334,28 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
           rgb_matrix_set_color(38, 73, 255, 143);
     }
 
-    // 1-16, 2-15, 3-14, 4-13, 5-12, 6-11, 7-10, 8-9, ,9-18, 10-19
-    if (color_layers && color_indicators) {
+    int leds[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19};
+    if (to_color_indicators) {
       if (layer_state_is(_FNBOTH)) {
-          rgb_matrix_set_color(19, 255, 73, 173);
+          rgb_matrix_set_color(leds[_FNBOTH], 255, 73, 173);
       } else if (layer_state_is(_FNONE)) {
-          rgb_matrix_set_color(9, 255, 168, 0);
+          rgb_matrix_set_color(leds[_FNONE], 255, 168, 0);
       } else if (layer_state_is(_FNTWO)) {
-          rgb_matrix_set_color(18, 255, 168, 0);
+          rgb_matrix_set_color(leds[_FNTWO], 255, 168, 0);
       } else if (layer_state_is(_QWERTYM)) {
-          rgb_matrix_set_color(16, 255, 168, 0);
+          rgb_matrix_set_color(leds[_QWERTYM], 255, 168, 0);
       } else if (layer_state_is(_COLEMAK)) {
-          rgb_matrix_set_color(15, 255, 168, 0);
+          rgb_matrix_set_color(leds[_COLEMAK], 255, 168, 0);
       } else if (layer_state_is(_QWERTY)) {
-          rgb_matrix_set_color(14, 255, 168, 0);
+          rgb_matrix_set_color(leds[_QWERTY], 255, 168, 0);
       } else if (layer_state_is(_SYMBOLS)) {
-          rgb_matrix_set_color(13, 255, 168, 0);
+          rgb_matrix_set_color(leds[_SYMBOLS], 255, 168, 0);
       } else if (layer_state_is(_NUMPAD)) {
           rgb_matrix_set_color(12, 255, 168, 0);
       } else if (layer_state_is(_MOUSE)) {
-          rgb_matrix_set_color(11, 255, 168, 0);
+          rgb_matrix_set_color(leds[_MOUSE], 255, 168, 0);
       } else if (layer_state_is(_MIDI)) {
-          rgb_matrix_set_color(10, 255, 168, 0);
+          rgb_matrix_set_color(leds[_MIDI], 255, 168, 0);
       }
     }
 }
@@ -390,7 +380,7 @@ bool prev_was_default = false;
 
 layer_state_t layer_state_set_user(layer_state_t state) {
     value = rgb_matrix_get_val();  // the currently used brightness
-    if (!color_layers) {
+    if (!to_color_layers) {
         return state;
     }
 
