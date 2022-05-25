@@ -365,8 +365,7 @@ void layer_two_actions(int key_idx, bool release) {
         }
 }
 
-// NOTE: Room for activities
-// NOTE: right now it seems to be set for youtube
+// NOTE: Anki
 void layer_three_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
@@ -398,11 +397,7 @@ void layer_three_actions(int key_idx, bool release) {
             }
             break;
         case 5:
-            if (!release) {
-                register_code(KC_5);
-            } else {
-                unregister_code(KC_5);
-            }
+            tap_code16(G(KC_Z));
             break;
         case 6:
             if (!release) {
@@ -455,6 +450,7 @@ void layer_five_actions(int key_idx, bool release) {
         case 3:
             break;
         case 4:
+            tap_code16(G(S(KC_BSLS)));
             break;
         case 5:
             tap_code16(G(A(KC_RBRC))); // toggle system theme
