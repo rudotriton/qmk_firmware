@@ -108,8 +108,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // numpad and arrow layer
   [_NUMPAD] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX,       XXXXXXX,         XXXXXXX,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      KC_WBAK, KC_WFWD, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,  KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT_T(KC_SCLN), XXXXXXX, KC_TRNS,
+  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      KC_WBAK, KC_WFWD, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), RSFT(KC_SCLN),   XXXXXXX, XXXXXXX, XXXXXXX,
+  XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,  KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT_T(KC_SCLN), KC_DEL,  KC_TRNS,
   KC_TRNS, LCTL(KC_DOWN), LCTL(KC_LEFT),   LCTL(KC_RGHT), LCTL(KC_UP), KC_F11,  KC_0,    RCMD_T(KC_1), KC_2,         KC_3,         XXXXXXX,         KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
