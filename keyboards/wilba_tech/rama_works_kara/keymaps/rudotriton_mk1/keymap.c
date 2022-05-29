@@ -122,10 +122,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 
   [_MIDI] = LAYOUT_60_hhkb(
   KC_TRNS,   MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  MI_LEG,    MI_MOD, MI_Cs, MI_Ds, XXXXXXX, MI_Fs, MI_Gs, MI_As, XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, XXXXXXX,
-  MI_ALLOFF, MI_C,    MI_D,  MI_E, MI_F, MI_G, MI_A, MI_B, MI_C_1, MI_D_1, MI_E_1, MI_F_1, XXXXXXX,
+  MI_LEG,    MI_MOD, MI_Cs, MI_Ds, XXXXXXX, MI_Fs, MI_Gs, MI_As, XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, KC_BSPC,
+  MI_ALLOFF, MI_C,    MI_D,  MI_E, MI_F, MI_G, MI_A, MI_B, MI_C_1, MI_D_1, MI_E_1, MI_F_1, KC_ENT,
   MI_SOFT,   MI_PORT, MI_SOST, MI_VELD, MI_OCTD, XXXXXXX, MI_OCTU, MI_VELU, XXXXXXX, XXXXXXX, XXXXXXX, MI_SOFT, KC_TRNS,
-  KC_TRNS,   KC_TRNS,                            MI_SUS,                            KC_TRNS, KC_TRNS),
+  KC_R,      KC_SPC,                            MI_SUS,                            KC_SPC, KC_TRNS),
 
   [_FNONE] = LAYOUT_60_hhkb(
   KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_INS,  KC_DEL,
@@ -336,27 +336,38 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
     int leds[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19};
     if (to_color_indicators) {
-      if (layer_state_is(_FNBOTH)) {
-          rgb_matrix_set_color(leds[_FNBOTH], 255, 73, 173);
-      } else if (layer_state_is(_FNONE)) {
-          rgb_matrix_set_color(leds[_FNONE], 255, 168, 0);
-      } else if (layer_state_is(_FNTWO)) {
-          rgb_matrix_set_color(leds[_FNTWO], 255, 168, 0);
-      } else if (layer_state_is(_QWERTYM)) {
-          rgb_matrix_set_color(leds[_QWERTYM], 255, 168, 0);
-      } else if (layer_state_is(_COLEMAK)) {
-          rgb_matrix_set_color(leds[_COLEMAK], 255, 168, 0);
-      } else if (layer_state_is(_QWERTY)) {
-          rgb_matrix_set_color(leds[_QWERTY], 255, 168, 0);
-      } else if (layer_state_is(_SYMBOLS)) {
-          rgb_matrix_set_color(leds[_SYMBOLS], 255, 168, 0);
-      } else if (layer_state_is(_NUMPAD)) {
-          rgb_matrix_set_color(12, 255, 168, 0);
-      } else if (layer_state_is(_MOUSE)) {
-          rgb_matrix_set_color(leds[_MOUSE], 255, 168, 0);
-      } else if (layer_state_is(_MIDI)) {
-          rgb_matrix_set_color(leds[_MIDI], 255, 168, 0);
-      }
+      switch(get_highest_layer(layer_state|default_layer_state)) {
+            case _FNBOTH:
+                rgb_matrix_set_color(leds[_FNBOTH], 255, 73, 173);
+                break;
+            case _FNONE:
+                rgb_matrix_set_color(leds[_FNONE], 255, 168, 0);
+                break;
+            case _FNTWO:
+                rgb_matrix_set_color(leds[_FNTWO], 255, 168, 0);
+                break;
+            case _QWERTYM:
+                rgb_matrix_set_color(leds[_QWERTYM], 255, 168, 0);
+                break;
+            case _COLEMAK:
+                rgb_matrix_set_color(leds[_COLEMAK], 255, 168, 0);
+                break;
+            case _QWERTY:
+                rgb_matrix_set_color(leds[_QWERTY], 255, 168, 0);
+                break;
+            case _SYMBOLS:
+                rgb_matrix_set_color(leds[_SYMBOLS], 255, 168, 0);
+                break;
+            case _NUMPAD:
+                rgb_matrix_set_color(12, 255, 168, 0);
+                break;
+            case _MOUSE:
+                rgb_matrix_set_color(leds[_MOUSE], 255, 168, 0);
+                break;
+            case _MIDI:
+                rgb_matrix_set_color(leds[_MIDI], 255, 168, 0);
+                break;
+        }
     }
 }
 
