@@ -81,7 +81,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_ESC,        KC_1,              KC_2,              KC_3,         KC_4,               KC_5, KC_6, KC_7,                KC_8,         KC_9,              KC_0,            KC_MINS, KC_EQL,  KC_BSLS, KC_DEL,
   KC_TAB,        LT(_MOUSE, KC_Q),  LCTL_T(KC_W),      LCTL_T(KC_E), KC_R,               KC_T, KC_Y, KC_U,                RCTL_T(KC_I), RCTL_T(KC_O),      LT(_MOUSE, KC_P), KC_LBRC, KC_RBRC, KC_BSPC,
   CTL_T(KC_ESC), LSFT_T(KC_A),      LT(_NUMPAD, KC_S), LALT_T(KC_D), LT(_SYMBOLS, KC_F), KC_G, KC_H, LT(_SYMBOLS, KC_J),  RALT_T(KC_K), LT(_NUMPAD, KC_L), RSFT_T(KC_SCLN),  LT(_FNONE, KC_QUOT), KC_ENT,
-  KC_LSFT,       LT(_NUMPAD, KC_Z), KC_X,              KC_C,         LCMD_T(KC_V),       KC_B, KC_K, RCMD_T(KC_M),        KC_COMM,      KC_DOT,            KC_SLSH,         KC_RSFT, TD(TD_FN_01),
+  KC_LSFT,       LT(_NUMPAD, KC_Z), KC_X,              KC_C,         LCMD_T(KC_V),       KC_B, KC_N, RCMD_T(KC_M),        KC_COMM,      KC_DOT,            KC_SLSH,         KC_RSFT, TD(TD_FN_01),
   KC_LALT, KC_LCMD,                                          KC_SPC,                             KC_RCMD, TD(TD_FN_02)),
 
   [_COLEMAK] = LAYOUT_60_hhkb(
@@ -121,11 +121,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_MIDI] = LAYOUT_60_hhkb(
-  KC_TRNS,   MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  MI_LEG,    MI_MOD, MI_Cs, MI_Ds, XXXXXXX, MI_Fs, MI_Gs, MI_As, XXXXXXX, MI_Cs_1, MI_Ds_1, XXXXXXX, XXXXXXX, KC_BSPC,
-  MI_ALLOFF, MI_C,    MI_D,  MI_E, MI_F, MI_G, MI_A, MI_B, MI_C_1, MI_D_1, MI_E_1, MI_F_1, KC_ENT,
-  MI_SOFT,   MI_PORT, MI_SOST, MI_VELD, MI_OCTD, XXXXXXX, MI_OCTU, MI_VELU, XXXXXXX, XXXXXXX, XXXXXXX, MI_SOFT, KC_TRNS,
-  KC_R,      KC_SPC,                            MI_SUS,                            KC_SPC, KC_TRNS),
+  KC_TRNS, MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, XXXXXXX, KC_ENT,
+  MI_As,   MI_MOD,   MI_Cs_1,  MI_Ds_1,  XXXXXXX,  MI_Fs_1,  MI_Gs_1,  MI_As_1,  XXXXXXX,  MI_Cs_2,  MI_Ds_2,   XXXXXXX, MI_Fs_2, KC_BSPC,
+  MI_B,    MI_C_1,   MI_D_1,   MI_E_1,   MI_F_1,   MI_G_1,   MI_A_1,   MI_B_1,   MI_C_2,   MI_D_2,   MI_E_2,    MI_F_2,  MI_G_2,
+  MI_SOFT, MI_PORT,  MI_SOST,  MI_VELD,  MI_OCTD,  XXXXXXX,  MI_OCTU,  MI_VELU,  XXXXXXX,  XXXXXXX,  XXXXXXX,   MI_SOFT, KC_TRNS,
+  KC_R,    KC_SPC,                            MI_SUS,                            KC_SPC, KC_TRNS),
 
   [_FNONE] = LAYOUT_60_hhkb(
   KC_GRV,  KC_F1,   KC_F2,   KC_F3,   KC_F4,   KC_F5,   KC_F6,   KC_F7,   KC_F8,   KC_F9,   KC_F10,  KC_F11,  KC_F12,  KC_INS,  KC_DEL,

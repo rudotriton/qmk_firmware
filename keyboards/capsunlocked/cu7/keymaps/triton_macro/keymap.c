@@ -167,16 +167,16 @@ void vim_encoder(bool clockwise) {
             break;
         case 3:
             if (clockwise) {
-                  tap_code16(C(KC_R));
-              } else {
-                  tap_code(KC_U);
+                tap_code16(C(KC_R));
+            } else {
+                tap_code(KC_U);
             }
             break;
         case 4:
             if (clockwise) {
-                  tap_code(KC_WH_R);
-              } else {
-                  tap_code(KC_WH_L);
+                tap_code(KC_WH_L);
+            } else {
+                tap_code(KC_WH_R);
             }
             break;
     }
