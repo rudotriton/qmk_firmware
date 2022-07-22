@@ -435,7 +435,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 
 // Determine the current tap dance state
 td_state_t cur_dance(qk_tap_dance_state_t *state) {
-  if (state->count == 1) {
+    if (state->count == 1) {
         if (state->interrupted || !state->pressed)
             return TD_SINGLE_TAP;
         // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.

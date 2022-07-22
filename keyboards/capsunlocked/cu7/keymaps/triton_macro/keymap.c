@@ -146,9 +146,9 @@ void vim_encoder(bool clockwise) {
     switch (ltwo_flag) {
         case 0:
             if (clockwise) {
-                tap_code(KC_WH_D);
+                tap_code16(KC_DOWN);
             } else {
-                tap_code(KC_WH_U);
+                tap_code16(KC_UP);
             }
             break;
         case 1:
@@ -177,6 +177,20 @@ void vim_encoder(bool clockwise) {
                 tap_code(KC_WH_L);
             } else {
                 tap_code(KC_WH_R);
+            }
+            break;
+        case 5:
+            if (clockwise) {
+                tap_code(KC_WH_D);
+            } else {
+                tap_code(KC_WH_U);
+            }
+            break;
+        case 6: //
+            if (clockwise) {
+                tap_code(KC_RIGHT);
+            } else {
+                tap_code(KC_LEFT);
             }
             break;
     }
@@ -318,7 +332,7 @@ void layer_one_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
             if (!release)
-            tap_code16(C(KC_LEFT));
+            tap_code16(C(KC_LEFT)); // prev desktop
             break;
         case 2:
             if (is_cmd_tab_active && !release) {
@@ -331,41 +345,44 @@ void layer_one_actions(int key_idx, bool release) {
             break;
         case 3:
             if (!release)
-            tap_code16(C(KC_RGHT));
+                tap_code16(C(KC_RGHT));
             break;
         case 4:
             if (!release)
-            tap_code16(G(A(KC_V)));
+                tap_code16(G(A(KC_V)));
             break;
         case 5:
             if (release)
-            unregister_code16(C(KC_DOWN));
+                unregister_code16(C(KC_DOWN));
             else
-            register_code16(C(KC_DOWN));
+                register_code16(C(KC_DOWN));
             break;
         case 6:
             if (release)
-            unregister_code16(KC_F11);
+                unregister_code16(KC_F11);
             else
-            register_code16(KC_F11);
+                register_code16(KC_F11);
             break;
 
     }
 }
 
 void layer_two_actions(int key_idx, bool release) {
-    if (release) return;
-        switch (key_idx) {
-            case 1:
-            case 2:
-            case 3:
-            case 4:
-                ltwo_flag = ltwo_flag == key_idx ? 0 : key_idx;
-                break;
-        }
+    switch (key_idx) {
+        case 6:
+            if (!release) {
+                ltwo_flag = key_idx; // or 6
+            } else {
+                ltwo_flag = 0; // or 6
+            }
+            break;
+        default:
+            if (release) return;
+            ltwo_flag = ltwo_flag == key_idx ? 0 : key_idx;
+            break;
+    }
 }
 
-// NOTE: Anki
 void layer_three_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
@@ -397,13 +414,17 @@ void layer_three_actions(int key_idx, bool release) {
             }
             break;
         case 5:
-            tap_code16(G(KC_Z));
+            if (!release) {
+                register_code(KC_5);
+            } else {
+                unregister_code(KC_5);
+            }
             break;
         case 6:
             if (!release) {
-                register_code(KC_SPC);
+                register_code(KC_6);
             } else {
-                unregister_code(KC_SPC);
+                unregister_code(KC_6);
             }
             break;
     }
@@ -528,7 +549,7 @@ void key_switch(int key_idx, bool release) {
 
 // Determine the current tap dance state
 td_state_t cur_dance(qk_tap_dance_state_t *state) {
-  if (state->count == 1) {
+    if (state->count == 1) {
         if (state->interrupted || !state->pressed)
             return TD_SINGLE_TAP;
         // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
