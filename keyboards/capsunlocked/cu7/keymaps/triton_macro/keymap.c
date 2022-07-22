@@ -61,9 +61,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_META] = double_taps,
 
     [_RESET] = LAYOUT(
-             KC_TRNS,
-    TO(_DEFAULT), KC_NO, RESET,
-    KC_NO,        KC_NO, KC_NO),
+                  KC_TRNS,
+    TO(_DEFAULT), KC_NO,   RESET,
+    KC_NO,        KC_NO,   KC_NO),
 
     [_MUSIC] = double_taps,
 };
@@ -181,12 +181,12 @@ void vim_encoder(bool clockwise) {
             break;
         case 5:
             if (clockwise) {
-                tap_code(KC_WH_D);
-            } else {
                 tap_code(KC_WH_U);
+            } else {
+                tap_code(KC_WH_D);
             }
             break;
-        case 6: //
+        case 6:
             if (clockwise) {
                 tap_code(KC_RIGHT);
             } else {
@@ -198,16 +198,14 @@ void vim_encoder(bool clockwise) {
 
 bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (get_layer()) {
-        // Volume up/down on the encoder
-        case _DEFAULT:
+        case _DEFAULT: // volume up/down
             if (clockwise) {
                 tap_code(KC_VOLU);
             } else {
                 tap_code(KC_VOLD);
             }
             break;
-        // switch application
-        case _ONE:
+        case _ONE: // cycle applications
             if (!is_cmd_tab_active) {
                 is_cmd_tab_active = true;
                 register_code(KC_RCMD);
@@ -222,14 +220,7 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
         case _TWO:
             vim_encoder(clockwise);
             break;
-        case _THREE:
-            if (clockwise) {
-                tap_code(KC_RGHT);
-            } else {
-                tap_code(KC_LEFT);
-            }
-            break;
-        case _FOUR:
+        case _FOUR: // cycle browser tabs
             if (clockwise) {
                 tap_code16(C(KC_TAB));
             } else {
