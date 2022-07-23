@@ -17,10 +17,10 @@
 #include QMK_KEYBOARD_H
 
 enum my_keycodes {
-  RM_TOG = SAFE_RANGE,
-  RM_LCL,
-  RM_ICL,
-  RM_MCL,
+  RM_TOG = SAFE_RANGE, // toggle kb leds
+  RM_LCL, // toggle layer colors
+  RM_ICL, // toggle layer indicators
+  RM_MCL, // modifier leds
   RM_RMOD,
   RM_MOD,
   RM_HDE,
@@ -121,8 +121,8 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_MIDI] = LAYOUT_60_hhkb(
-  KC_TRNS, MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, XXXXXXX, KC_ENT,
-  MI_As,   MI_MOD,   MI_Cs_1,  MI_Ds_1,  XXXXXXX,  MI_Fs_1,  MI_Gs_1,  MI_As_1,  XXXXXXX,  MI_Cs_2,  MI_Ds_2,   XXXXXXX, MI_Fs_2, KC_BSPC,
+  KC_TRNS, MI_VEL_1, MI_VEL_2, MI_VEL_3, MI_VEL_4, MI_VEL_5, MI_VEL_6, MI_VEL_7, MI_VEL_8, MI_VEL_9, MI_VEL_10, XXXXXXX, XXXXXXX, KC_ENT, KC_BSPC,
+  MI_As,   MI_MOD,   MI_Cs_1,  MI_Ds_1,  XXXXXXX,  MI_Fs_1,  MI_Gs_1,  MI_As_1,  XXXXXXX,  MI_Cs_2,  MI_Ds_2,   XXXXXXX, MI_Fs_2, MI_Gs_2,
   MI_B,    MI_C_1,   MI_D_1,   MI_E_1,   MI_F_1,   MI_G_1,   MI_A_1,   MI_B_1,   MI_C_2,   MI_D_2,   MI_E_2,    MI_F_2,  MI_G_2,
   MI_SOFT, MI_PORT,  MI_SOST,  MI_VELD,  MI_OCTD,  XXXXXXX,  MI_OCTU,  MI_VELU,  XXXXXXX,  XXXXXXX,  XXXXXXX,   MI_SOFT, KC_TRNS,
   KC_R,    KC_SPC,                            MI_SUS,                            KC_SPC, KC_TRNS),
@@ -307,6 +307,9 @@ bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
 
 // int led_seq[] = {17, 16, 15, 14, 13, 12, 11, 10, 9, 18, 19, 20, 21, 22, 23, 29, 28, 27, 26, 25, 24, 0, 1, 2, 3, 4, 5, 6, 7, 8, 44, 43, 42, 41, 40, 39, 46, 47, 48, 49, 50, 51, 54, 53, 52, 58, 57, 56, 55, 31, 32, 33, 34, 35, 45, 38, 37, 36, 30, 59, 60, 61};
 
+// int midi_kb_leds[] = {7, 5, 4, 2, 1, 0, 25, 26, 28, 29, 8, 44, 43, 42, 41, 40, 39, 46, 47, 48, 49, 50, 51};
+int midi_black_key_leds[] = {7, 5, 4, 2, 1, 0, 25, 26, 28, 29};
+
 // color caps lock green when caps is on
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 
@@ -365,7 +368,10 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 rgb_matrix_set_color(leds[_MOUSE], 255, 168, 0);
                 break;
             case _MIDI:
-                rgb_matrix_set_color(leds[_MIDI], 255, 168, 0);
+                rgb_matrix_set_color(leds[_MIDI], 14, 196, 250);
+                for (int i = 0; i < 10; i++) {
+                    rgb_matrix_set_color(midi_black_key_leds[i], 255, 168, 0);
+                }
                 break;
         }
     }
@@ -415,7 +421,7 @@ layer_state_t layer_state_set_user(layer_state_t state) {
             rgb_matrix_sethsv_noeeprom(115, 255, value);
             break;
         case _MIDI:
-            rgb_matrix_sethsv_noeeprom(85, 255, value);
+            rgb_matrix_sethsv_noeeprom(164, 180, value);
             break;
         case _FNONE:
             rgb_matrix_sethsv_noeeprom(236, 255, value);
