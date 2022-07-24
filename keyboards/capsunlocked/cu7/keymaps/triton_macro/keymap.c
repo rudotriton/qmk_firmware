@@ -77,6 +77,9 @@ int get_layer(void) {
 bool is_cmd_tab_active = false;
 uint16_t cmd_tab_timer = 0;
 
+// layer one flag whether to switch workspace or move window to workspace
+bool to_move_win = false;
+
 // rgb_flag
 // 0 - screen brightness
 // 1 - hue
@@ -253,6 +256,12 @@ int led_indices[] = { 2, 1, 0, 3, 4, 5 };
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int layer = get_layer();
     switch (layer) {
+        case _ONE:
+            rgb_matrix_set_color(2, 255, 168, 0);
+            if (to_move_win) {
+                rgb_matrix_set_color(5, 0, 108, 255);
+            }
+            break;
         case _TWO:
             rgb_matrix_set_color(1, 255, 168, 0);
             if (ltwo_flag) {
@@ -319,19 +328,33 @@ void default_actions(int key_idx, bool release) {
 void layer_one_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
-            if (!release)
-            tap_code16(C(KC_LEFT)); // prev desktop
+            if (!release) {
+                if (to_move_win) {
+                    tap_code16(G(A(KC_L)));
+                } else {
+                    tap_code16(C(KC_LEFT)); // prev desktop
+                }
+            }
             break;
         case 2:
             if (release) {
                 unregister_code16(C(KC_UP));
             } else {
-                register_code16(C(KC_UP));
+                if (to_move_win) {
+                    tap_code16(G(A(KC_E)));
+                } else {
+                    register_code16(C(KC_UP));
+                }
             }
             break;
         case 3:
-            if (!release)
-                tap_code16(C(KC_RGHT));
+            if (!release) {
+                if (to_move_win) {
+                    tap_code16(G(A(KC_Y)));
+                } else {
+                    tap_code16(C(KC_RGHT)); // next desktop
+                }
+            }
             break;
         case 4:
             if (!release)
@@ -525,11 +548,26 @@ void tap_key_switch(int key_idx, bool release) {
 void default_hold_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 6:
-            l_eight_lock = false;
-            layer_move(_MUSIC);
+            if (!release) {
+                l_eight_lock = false;
+                layer_move(_MUSIC);
+            }
             break;
     }
 }
+
+void layer_one_hold_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 6:
+            if (!release) {
+                to_move_win = true;
+            } else {
+                to_move_win = false;
+            }
+            break;
+    }
+}
+
 
 void layer_three_hold_actions(int key_idx, bool release) {
     switch (key_idx) {
@@ -566,7 +604,7 @@ void layer_three_hold_actions(int key_idx, bool release) {
 
 void (*layer_hold_actions[9]) (int, bool) = {
     default_hold_actions,
-    layer_one_actions,
+    layer_one_hold_actions,
     layer_two_actions,
     layer_three_hold_actions,
     layer_four_actions,
