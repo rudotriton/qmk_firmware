@@ -1,6 +1,4 @@
 /*
-Copyright 2021 CapsUnlocked
-
 This program is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 2 of the License, or
@@ -313,8 +311,7 @@ void default_actions(int key_idx, bool release) {
             tap_code(KC_MUTE);
             break;
         case 6:
-            l_eight_lock = false;
-            layer_move(_MUSIC);
+            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
             break;
     }
 }
@@ -326,9 +323,7 @@ void layer_one_actions(int key_idx, bool release) {
             tap_code16(C(KC_LEFT)); // prev desktop
             break;
         case 2:
-            if (is_cmd_tab_active && !release) {
-                tap_code(KC_ENT); // allow bypassing the timeout
-            } else if (release) {
+            if (release) {
                 unregister_code16(C(KC_UP));
             } else {
                 register_code16(C(KC_UP));
@@ -349,7 +344,9 @@ void layer_one_actions(int key_idx, bool release) {
                 register_code16(C(KC_DOWN));
             break;
         case 6:
-            if (release)
+            if (is_cmd_tab_active && !release) {
+                tap_code(KC_ENT); // allow bypassing the timeout
+            } else if (release)
                 unregister_code16(KC_F11);
             else
                 register_code16(KC_F11);
@@ -362,9 +359,9 @@ void layer_two_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 6:
             if (!release) {
-                ltwo_flag = key_idx; // or 6
+                ltwo_flag = key_idx; // 6
             } else {
-                ltwo_flag = 0; // or 6
+                ltwo_flag = 0;
             }
             break;
         default:
@@ -378,30 +375,21 @@ void layer_three_actions(int key_idx, bool release) {
     switch (key_idx) {
         case 1:
             if (!release) {
-                register_code(KC_1);
-            } else {
-                unregister_code(KC_1);
+                tap_code16(G(KC_A));
             }
             break;
         case 2:
             if (!release) {
-                register_code(KC_2);
-            } else {
-                unregister_code(KC_2);
+                tap_code16(G(KC_C));
             }
             break;
         case 3:
-            if (!release) {
-                register_code(KC_3);
-            } else {
-                unregister_code(KC_3);
-            }
+            if (!release)
+                tap_code16(G(KC_V));
             break;
         case 4:
             if (!release) {
-                register_code(KC_4);
-            } else {
-                unregister_code(KC_4);
+                tap_code16(G(KC_Z));
             }
             break;
         case 5:
@@ -413,9 +401,7 @@ void layer_three_actions(int key_idx, bool release) {
             break;
         case 6:
             if (!release) {
-                register_code(KC_6);
-            } else {
-                unregister_code(KC_6);
+                tap_code16(G(S(KC_Z)));
             }
             break;
     }
@@ -532,8 +518,66 @@ void (*layer_actions[9]) (int, bool) = {
     layer_eight_actions
 };
 
-void key_switch(int key_idx, bool release) {
+void tap_key_switch(int key_idx, bool release) {
     (*layer_actions[get_layer()]) (key_idx, release);
+}
+
+void default_hold_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 6:
+            l_eight_lock = false;
+            layer_move(_MUSIC);
+            break;
+    }
+}
+
+void layer_three_hold_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 1:
+            if (!release) {
+                register_code(KC_LSHIFT);
+            } else {
+                unregister_code(KC_LSHIFT);
+            }
+            break;
+        case 4:
+            if (!release) {
+                register_code(KC_LCTL);
+            } else {
+                unregister_code(KC_LCTL);
+            }
+            break;
+        case 5:
+            if (!release) {
+                register_code(KC_LALT);
+            } else {
+                unregister_code(KC_LALT);
+            }
+            break;
+        case 6:
+            if (!release) {
+                register_code(KC_LCMD);
+            } else {
+                unregister_code(KC_LCMD);
+            }
+            break;
+    }
+}
+
+void (*layer_hold_actions[9]) (int, bool) = {
+    default_hold_actions,
+    layer_one_actions,
+    layer_two_actions,
+    layer_three_hold_actions,
+    layer_four_actions,
+    layer_five_actions,
+    layer_six_actions,
+    layer_seven_actions,
+    layer_eight_actions
+};
+
+void hold_key_switch(int key_idx, bool release) {
+    (*layer_hold_actions[get_layer()]) (key_idx, release);
 }
 
 // NOTE: START OF TAPDANCES
@@ -553,8 +597,10 @@ void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_
     key_tap_state->state = cur_dance(state);
     switch (key_tap_state->state) {
         case TD_SINGLE_HOLD:
+            hold_key_switch(key_idx, false);
+            break;
         case TD_SINGLE_TAP:
-            key_switch(key_idx, false);
+            tap_key_switch(key_idx, false);
             break;
         case TD_DOUBLE_TAP:
             if (layer_state_is(target_layer)) {
@@ -581,8 +627,10 @@ void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_one_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_one_tap_state.state == TD_SINGLE_HOLD || key_one_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(1, true);
+    if (key_one_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(1, true);
+    } else if (key_one_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(1, true);
     }
     key_one_tap_state.state = TD_NONE;
 }
@@ -603,8 +651,10 @@ void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_two_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_two_tap_state.state == TD_SINGLE_HOLD || key_two_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(2, true);
+    if (key_two_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(2, true);
+    } else if (key_two_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(2, true);
     }
     key_two_tap_state.state = TD_NONE;
 }
@@ -621,8 +671,10 @@ void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_three_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_three_tap_state.state == TD_SINGLE_HOLD || key_three_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(3, true);
+    if (key_three_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(3, true);
+    } else if (key_three_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(3, true);
     }
     key_three_tap_state.state = TD_NONE;
 }
@@ -639,8 +691,10 @@ void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_four_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_four_tap_state.state == TD_SINGLE_HOLD || key_four_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(4, true);
+    if (key_four_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(4, true);
+    } else if (key_four_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(4, true);
     }
     key_four_tap_state.state = TD_NONE;
 }
@@ -657,8 +711,10 @@ void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_five_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_five_tap_state.state == TD_SINGLE_HOLD || key_five_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(5, true);
+    if (key_five_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(5, true);
+    } else if (key_five_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(5, true);
     }
     key_five_tap_state.state = TD_NONE;
 }
@@ -678,8 +734,10 @@ void key_six_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_six_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_six_tap_state.state == TD_SINGLE_HOLD || key_six_tap_state.state == TD_SINGLE_TAP) {
-        key_switch(6, true);
+    if (key_six_tap_state.state == TD_SINGLE_HOLD) {
+        hold_key_switch(6, true);
+    } else if (key_six_tap_state.state == TD_SINGLE_TAP) {
+        tap_key_switch(6, true);
     }
     key_six_tap_state.state = TD_NONE;
 }

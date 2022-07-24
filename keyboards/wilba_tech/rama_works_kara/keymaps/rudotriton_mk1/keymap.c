@@ -317,23 +317,19 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       if (host_keyboard_led_state().caps_lock) {
           rgb_matrix_set_color(8, 73, 255, 143);
       }
-
-      if (get_mods() & MOD_BIT(KC_LSFT) || get_mods() & MOD_BIT(KC_RSFT)) {
+      if (get_mods() & MOD_MASK_SHIFT) {
           rgb_matrix_set_color(45, 73, 255, 143);
           rgb_matrix_set_color(53, 73, 255, 143);
       }
-      if (get_mods() & MOD_BIT(KC_LCTL) || get_mods() & MOD_BIT(KC_RCTL)) {
+      if (get_mods() & MOD_MASK_CTRL) {
           rgb_matrix_set_color(36, 73, 255, 143);
           rgb_matrix_set_color(59, 73, 255, 143);
       }
-
-      // cmd key
-      if (get_mods() & MOD_BIT(KC_LGUI) || get_mods() & MOD_BIT(KC_RGUI)) {
+      if (get_mods() & MOD_MASK_GUI) { // cmd key
           rgb_matrix_set_color(37, 73, 255, 143);
           rgb_matrix_set_color(60, 73, 255, 143);
       }
-
-      if (get_mods() & MOD_BIT(KC_LALT) || get_mods() & MOD_BIT(KC_RALT))
+      if (get_mods() & MOD_MASK_ALT)
           rgb_matrix_set_color(38, 73, 255, 143);
     }
 
