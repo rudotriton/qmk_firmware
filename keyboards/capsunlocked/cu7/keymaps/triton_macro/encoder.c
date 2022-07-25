@@ -100,3 +100,49 @@ void vim_encoder(bool clockwise) {
             break;
     }
 }
+
+bool encoder_update_user(uint8_t index, bool clockwise) {
+    switch (get_layer()) {
+        case _DEFAULT: // volume up/down
+            if (clockwise) {
+                tap_code(KC_VOLU);
+            } else {
+                tap_code(KC_VOLD);
+            }
+            break;
+        case _ONE: // cycle applications
+            if (!is_cmd_tab_active) {
+                is_cmd_tab_active = true;
+                register_code(KC_RCMD);
+            }
+            cmd_tab_timer = timer_read();
+            if (clockwise) {
+                tap_code16(KC_TAB);
+            } else {
+                tap_code16(S(KC_TAB));
+            }
+            break;
+        case _TWO:
+            vim_encoder(clockwise);
+            break;
+        case _FOUR: // cycle browser tabs
+            if (clockwise) {
+                tap_code16(C(KC_TAB));
+            } else {
+                tap_code16(C(S(KC_TAB)));
+            }
+            break;
+        case _META:
+            rgb_encoder(clockwise);
+            break;
+        case _MUSIC:
+            if (clockwise) {
+                  tap_code16(S(KC_RGHT));
+              } else {
+                  tap_code16(S(KC_LEFT));
+            }
+            break;
+    }
+    return true;
+}
+

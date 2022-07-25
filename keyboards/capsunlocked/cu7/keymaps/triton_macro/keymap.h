@@ -4,11 +4,7 @@
 #include QMK_KEYBOARD_H
 #include "util.h"
 #include "encoder.h"
-#include "layer_actions.h"
-#include "layer_hold_actions.h"
-
-extern void (*layer_hold_actions[9]) (int, bool);
-extern void (*layer_actions[9]) (int, bool);
+#include "tap_dances.h"
 
 // layers
 #define _DEFAULT 0
@@ -20,19 +16,6 @@ extern void (*layer_actions[9]) (int, bool);
 #define _META 6
 #define _RESET 7
 #define _MUSIC 8
-
-typedef enum {
-  TD_NONE,
-  TD_UNKNOWN,
-  TD_SINGLE_TAP,
-  TD_SINGLE_HOLD,
-  TD_DOUBLE_TAP
-} td_state_t;
-
-typedef struct {
-  bool is_press_action;
-  td_state_t state;
-} td_tap_t;
 
 enum {
   TD_L_01,

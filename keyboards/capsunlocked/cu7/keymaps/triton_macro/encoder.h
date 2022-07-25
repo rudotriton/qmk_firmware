@@ -3,6 +3,7 @@
 
 #include QMK_KEYBOARD_H
 
+extern uint16_t cmd_tab_timer;
 extern int rgb_flag;
 extern int ltwo_flag;
 
