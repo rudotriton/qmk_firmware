@@ -257,10 +257,12 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int layer = get_layer();
     switch (layer) {
         case _ONE:
-            rgb_matrix_set_color(2, 255, 168, 0);
             if (to_move_win) {
-                rgb_matrix_set_color(5, 0, 108, 255);
+                for (int i = led_min; i < led_max; i++) {
+                    rgb_matrix_set_color(i, 0, 108, 255);
+                }
             }
+            rgb_matrix_set_color(2, 255, 168, 0);
             break;
         case _TWO:
             rgb_matrix_set_color(1, 255, 168, 0);
@@ -502,23 +504,25 @@ void layer_seven_actions(int key_idx, bool release) {
 
 // some spotify actions
 void layer_eight_actions(int key_idx, bool release) {
-    if (key_idx == 6 && release && !l_eight_lock)
-        layer_move(_DEFAULT);
-    if (release) return;
+    if (release) return; // early return, since we don't use release for other keys
 
     switch (key_idx) {
         case 1:
             tap_code16(G(KC_S)); // shuffle
             break;
         case 2:
-            tap_code16(G(KC_R)); // repeat
+            tap_code(KC_MPLY);
             break;
         case 3:
-            l_eight_lock = true;
-            layer_move(_MUSIC);
+            tap_code16(G(KC_R)); // repeat
             break;
         case 4:
-            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
+            if (l_eight_lock) {
+                layer_move(_DEFAULT);
+            } else {
+                l_eight_lock = true;
+                layer_move(_MUSIC);
+            }
             break;
         case 5:
             tap_code(KC_BSPC); // delete for removing a song from the playlist
@@ -546,12 +550,17 @@ void tap_key_switch(int key_idx, bool release) {
 }
 
 void default_hold_actions(int key_idx, bool release) {
+    if (release) return;
     switch (key_idx) {
+        case 1:
+            tap_code16(G(KC_S)); // shuffle
+            break;
+        case 3:
+            tap_code16(G(KC_R)); // repeat
+            break;
         case 6:
-            if (!release) {
-                l_eight_lock = false;
-                layer_move(_MUSIC);
-            }
+            l_eight_lock = false;
+            layer_move(_MUSIC);
             break;
     }
 }
@@ -602,6 +611,29 @@ void layer_three_hold_actions(int key_idx, bool release) {
     }
 }
 
+void layer_eight_hold_actions(int key_idx, bool release) {
+    if (release && (key_idx == 6 || key_idx == 4) && !l_eight_lock)
+        layer_move(_DEFAULT);
+    if (release) return;
+    switch (key_idx) {
+        case 1:
+            tap_code(KC_MPRV);
+            break;
+        case 2:
+            tap_code(KC_MPLY);
+            break;
+        case 3:
+            tap_code(KC_MNXT);
+            break;
+        case 5:
+            tap_code(KC_MUTE);
+            break;
+        case 6:
+            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
+            break;
+    }
+}
+
 void (*layer_hold_actions[9]) (int, bool) = {
     default_hold_actions,
     layer_one_hold_actions,
@@ -611,7 +643,7 @@ void (*layer_hold_actions[9]) (int, bool) = {
     layer_five_actions,
     layer_six_actions,
     layer_seven_actions,
-    layer_eight_actions
+    layer_eight_hold_actions
 };
 
 void hold_key_switch(int key_idx, bool release) {
