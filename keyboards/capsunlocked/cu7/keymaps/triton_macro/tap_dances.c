@@ -42,7 +42,15 @@ void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_
     }
 }
 
-// NOTE: ONE
+void key_reset(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, void *user_data, int key_idx) {
+    if (key_tap_state->state == TD_SINGLE_HOLD) {
+        hold_key_switch(key_idx, true);
+    } else if (key_tap_state->state == TD_SINGLE_TAP) {
+        tap_key_switch(1, true);
+    }
+    key_tap_state->state = TD_NONE;
+}
+
 static td_tap_t key_one_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -53,15 +61,9 @@ void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_one_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_one_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(1, true);
-    } else if (key_one_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(1, true);
-    }
-    key_one_tap_state.state = TD_NONE;
+    key_reset(&key_one_tap_state, state, user_data, 1);
 }
 
-// NOTE: TWO
 static td_tap_t key_two_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -77,15 +79,9 @@ void key_two_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_two_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_two_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(2, true);
-    } else if (key_two_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(2, true);
-    }
-    key_two_tap_state.state = TD_NONE;
+    key_reset(&key_two_tap_state, state, user_data, 2);
 }
 
-// NOTE: THREE
 static td_tap_t key_three_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -97,15 +93,9 @@ void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_three_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_three_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(3, true);
-    } else if (key_three_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(3, true);
-    }
-    key_three_tap_state.state = TD_NONE;
+    key_reset(&key_three_tap_state, state, user_data, 3);
 }
 
-// NOTE: FOUR
 static td_tap_t key_four_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -117,15 +107,9 @@ void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_four_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_four_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(4, true);
-    } else if (key_four_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(4, true);
-    }
-    key_four_tap_state.state = TD_NONE;
+    key_reset(&key_four_tap_state, state, user_data, 4);
 }
 
-// NOTE: FIVE
 static td_tap_t key_five_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -137,15 +121,9 @@ void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_five_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_five_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(5, true);
-    } else if (key_five_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(5, true);
-    }
-    key_five_tap_state.state = TD_NONE;
+    key_reset(&key_five_tap_state, state, user_data, 5);
 }
 
-// NOTE: SIX
 static td_tap_t key_six_tap_state = {
     .is_press_action = true,
     .state = TD_NONE
@@ -160,10 +138,5 @@ void key_six_finished(qk_tap_dance_state_t *state, void *user_data) {
 }
 
 void key_six_reset(qk_tap_dance_state_t *state, void *user_data) {
-    if (key_six_tap_state.state == TD_SINGLE_HOLD) {
-        hold_key_switch(6, true);
-    } else if (key_six_tap_state.state == TD_SINGLE_TAP) {
-        tap_key_switch(6, true);
-    }
-    key_six_tap_state.state = TD_NONE;
+    key_reset(&key_six_tap_state, state, user_data, 6);
 }
