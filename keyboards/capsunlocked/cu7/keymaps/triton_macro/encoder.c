@@ -104,10 +104,15 @@ void vim_encoder(bool clockwise) {
 bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (get_layer()) {
         case _DEFAULT: // volume up/down
+            if (!is_shift_opt_active) {
+                is_shift_opt_active = true;
+                register_mods(MOD_MASK_SA);
+            }
+            shift_opt_timer = timer_read();
             if (clockwise) {
-                tap_code(KC_VOLU);
+                tap_code_delay(KC_VOLU, 10);
             } else {
-                tap_code(KC_VOLD);
+                tap_code_delay(KC_VOLD, 10);
             }
             break;
         case _ONE: // cycle applications

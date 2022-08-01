@@ -4,6 +4,9 @@
 #include QMK_KEYBOARD_H
 
 extern uint16_t cmd_tab_timer;
+extern uint16_t shift_opt_timer;
+extern bool is_cmd_tab_active;
+extern bool is_shift_opt_active;
 extern int rgb_flag;
 extern int ltwo_flag;
 

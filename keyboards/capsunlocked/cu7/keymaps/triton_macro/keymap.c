@@ -16,6 +16,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 bool is_cmd_tab_active = false;
 uint16_t cmd_tab_timer = 0;
+bool is_shift_opt_active = false;
+uint16_t shift_opt_timer = 0;
 bool to_move_win = false;
 int rgb_flag = 0;
 int ltwo_flag = 0;
@@ -46,6 +48,12 @@ void matrix_scan_user(void) {
         if (timer_elapsed(cmd_tab_timer) > 1250) {
             unregister_code(KC_RCMD);
             is_cmd_tab_active = false;
+        }
+    }
+    if (is_shift_opt_active) {
+        if (timer_elapsed(shift_opt_timer) > 1000) {
+            unregister_mods(MOD_MASK_SA);
+            is_shift_opt_active = false;
         }
     }
 }
