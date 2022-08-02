@@ -31,15 +31,19 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  * DIODE_DIRECTION: COL2ROW = COL = Anode (+), ROW = Cathode (-, marked on diode)
  *                  ROW2COL = ROW = Anode (+), COL = Cathode (-, marked on diode)
  *
-*/
+ */
 
 #define ENCODER_RESOLUTION 2
 
-#define ENCODERS_PAD_A { D6 }
-#define ENCODERS_PAD_B { D4 }
+#define ENCODERS_PAD_A \
+    { D6 }
+#define ENCODERS_PAD_B \
+    { D4 }
 
-#define MATRIX_ROW_PINS { D7, F0, F6 }
-#define MATRIX_COL_PINS { F5, F7, F4 }
+#define MATRIX_ROW_PINS \
+    { D7, F0, F6 }
+#define MATRIX_COL_PINS \
+    { F5, F7, F4 }
 #define UNUSED_PINS
 
 /* COL2ROW, ROW2COL, or CUSTOM_MATRIX */
@@ -54,12 +58,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define LOCKING_RESYNC_ENABLE
 
 #define RGB_DI_PIN F1
-#ifdef RGB_DI_PIN
-#define RGBLIGHT_ANIMATIONS
-// #define RGBLIGHT_EFFECT_BREATHING
-#define RGBLED_NUM 6
-#define RGBLIGHT_HUE_STEP 10
-#define RGBLIGHT_SAT_STEP 17
-#define RGBLIGHT_VAL_STEP 17
-#define RGBLIGHT_LIMIT_VAL 50
-#endif
+#define DRIVER_LED_TOTAL 6
+
+#define TAPPING_TERM 200
+
+#define ENABLE_RGB_MATRIX_CYCLE_UP_DOWN
+#define ENABLE_RGB_MATRIX_BREATHING
+
+#define MOUSEKEY_INTERVAL 16
+#define MOUSEKEY_DELAY 0
+#define MOUSEKEY_TIME_TO_MAX 60
+#define MOUSEKEY_MAX_SPEED 7
+#define MOUSEKEY_WHEEL_DELAY 0
