@@ -17,31 +17,31 @@
 #define _RESET 7
 #define _MUSIC 8
 
-enum {
-  TD_L_01,
-  TD_L_02,
-  TD_L_03,
-  TD_L_04,
-  TD_L_05,
-  TD_L_06
+enum { TD_L_01, TD_L_02, TD_L_03, TD_L_04, TD_L_05, TD_L_06 };
+
+enum my_keycodes {
+    MORSE_DOT = SAFE_RANGE,
+    MORSE_DASH
 };
 
 bool encoder_update_user(uint8_t index, bool clockwise);
 
 uint16_t cmd_tab_timer;
 uint16_t shift_opt_timer;
-bool is_cmd_tab_active;
-bool is_shift_opt_active;
-int rgb_flag;
-int ltwo_flag;
+bool     is_cmd_tab_active;
+bool     is_shift_opt_active;
+int      rgb_flag;
+int      ltwo_flag;
 
-void vim_encoder(bool clockwise);
+void eval_morse(void);
+
 void rgb_encoder(bool clockwise);
+void vim_encoder(bool clockwise);
 
 bool to_move_win;
 bool is_cmd_tab_active;
-int rgb_flag;
-int ltwo_flag;
+int  rgb_flag;
+int  ltwo_flag;
 bool l_eight_lock;
 
 void default_actions(int key_idx, bool release);
@@ -54,36 +54,31 @@ void layer_six_actions(int key_idx, bool release);
 void layer_seven_actions(int key_idx, bool release);
 void layer_eight_actions(int key_idx, bool release);
 
-void (*layer_actions[9]) (int, bool);
+void (*layer_actions[9])(int, bool);
 
 void default_hold_actions(int key_idx, bool release);
 void layer_one_hold_actions(int key_idx, bool release);
 void layer_three_hold_actions(int key_idx, bool release);
+void layer_five_hold_actions(int key_idx, bool release);
 void layer_eight_hold_actions(int key_idx, bool release);
 
-void (*layer_hold_actions[9]) (int, bool);
+void (*layer_hold_actions[9])(int, bool);
 
-typedef enum {
-  TD_NONE,
-  TD_UNKNOWN,
-  TD_SINGLE_TAP,
-  TD_SINGLE_HOLD,
-  TD_DOUBLE_TAP
-} td_state_t;
+typedef enum { TD_NONE, TD_UNKNOWN, TD_SINGLE_TAP, TD_SINGLE_HOLD, TD_DOUBLE_TAP } td_state_t;
 
 typedef struct {
-  bool is_press_action;
-  td_state_t state;
+    bool       is_press_action;
+    td_state_t state;
 } td_tap_t;
 
-void (*layer_hold_actions[9]) (int, bool);
-void (*layer_actions[9]) (int, bool);
+void (*layer_hold_actions[9])(int, bool);
+void (*layer_actions[9])(int, bool);
 
 void tap_key_switch(int key_idx, bool release);
 void hold_key_switch(int key_idx, bool release);
 
 td_state_t cur_dance(qk_tap_dance_state_t *state);
-void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer) (void));
+void       key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer)(void));
 
 void key_one_finished(qk_tap_dance_state_t *state, void *user_data);
 void key_one_reset(qk_tap_dance_state_t *state, void *user_data);
@@ -97,6 +92,8 @@ void key_five_finished(qk_tap_dance_state_t *state, void *user_data);
 void key_five_reset(qk_tap_dance_state_t *state, void *user_data);
 void key_six_finished(qk_tap_dance_state_t *state, void *user_data);
 void key_six_reset(qk_tap_dance_state_t *state, void *user_data);
+void morse_finished(qk_tap_dance_state_t *state, void *user_data);
+void morse_reset(qk_tap_dance_state_t *state, void *user_data);
 
 int get_layer(void);
 

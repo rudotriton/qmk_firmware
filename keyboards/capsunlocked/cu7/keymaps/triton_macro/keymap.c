@@ -1,23 +1,28 @@
-/*
-This program is free software: you can redistribute it and/or modify
-it under the terms of the GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or
-(at your option) any later version.
+/* Copyright 2022 @rudotriton
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
 
-This program is distributed in the hope that it will be useful,
-but WITHOUT ANY WARRANTY; without even the implied warranty of
-MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-GNU General Public License for more details.
-
-You should have received a copy of the GNU General Public License
-along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
 #include "keymap.h"
 
 bool is_cmd_tab_active = false;
 uint16_t cmd_tab_timer = 0;
-bool is_shift_opt_active = false;
+bool is_shift_opt_active = false; // small increment volume controls
 uint16_t shift_opt_timer = 0;
+bool timer_morse_mode = false;
+bool morse_evaluated = true;
+uint16_t morse_timer = 0;
 bool to_move_win = false;
 int rgb_flag = 0;
 int ltwo_flag = 0;
@@ -32,7 +37,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_TWO] = double_taps,
     [_THREE] = double_taps,
     [_FOUR] = double_taps,
-    [_FIVE] = double_taps,
+    [_FIVE] = LAYOUT( KC_TRNS,
+                     TD(TD_L_01), MORSE_DOT, MORSE_DASH,
+                     TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)
+    ),
     [_META] = double_taps,
 
     [_RESET] = LAYOUT(
@@ -56,6 +64,127 @@ void matrix_scan_user(void) {
             is_shift_opt_active = false;
         }
     }
+    if (timer_morse_mode && !morse_evaluated) {
+        if (timer_elapsed(morse_timer) > 250) {
+            eval_morse();
+        }
+    }
+
+}
+
+int morse_map[] = {
+    KC_SPC, // 0
+    KC_NO, // 1
+    KC_E, // 2
+    KC_T, // 3
+    KC_I, // 4
+    KC_A, // 5
+    KC_N, // 6
+    KC_M, // 7
+    KC_S, // 8
+    KC_U, // 9
+    KC_R, // 10
+    KC_W, // 11
+    KC_D, // 12
+    KC_K, // 13
+    KC_G, // 14
+    KC_O, // 15
+    KC_H, // 16
+    KC_V, // 17
+    KC_F, // 18
+    KC_NO, // 19
+    KC_L, // 20
+    KC_NO, // 21
+    KC_P, // 22
+    KC_J, // 23
+    KC_B, // 24
+    KC_X, // 25
+    KC_C, // 26
+    KC_Y, // 27
+    KC_Z, // 28
+    KC_Q, // 29
+    KC_NO, // 30
+    KC_NO, // 31
+    KC_5, // 32
+    KC_4, // 33
+    KC_NO, // 34
+    KC_3, // 35
+    KC_NO, // 36
+    KC_NO, // 37
+    KC_NO, // 38
+    KC_2, // 39
+    KC_NO, // 40
+    KC_NO, // 41
+    KC_NO, // 42
+    KC_NO, // 43
+    KC_NO, // 44
+    KC_NO, // 45
+    KC_NO, // 46
+    KC_1, // 47
+    KC_6, // 48
+    KC_NO, // 49
+    KC_NO, // 50
+    KC_NO, // 51
+    KC_NO, // 52
+    KC_NO, // 53
+    KC_NO, // 54
+    KC_NO, // 55
+    KC_7, // 56
+    KC_NO, // 57
+    KC_NO, // 58
+    KC_NO, // 59
+    KC_8, // 60
+    KC_NO, // 61
+    KC_9, // 62
+    KC_0, // 63
+};
+
+unsigned code = 0;
+
+void eval_morse(void) {
+    tap_code(morse_map[code]);
+    morse_evaluated = true;
+    code = 0;
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case MORSE_DOT:
+            if (record->event.pressed) {
+                morse_timer = timer_read();
+                morse_evaluated = false;
+                if (code == 0) {
+                    code = 2;
+                } else {
+                    code *= 2;
+                }
+                // NOTE: allows quick eval, if using codes >= 64 then up this
+                if (code >= 32)
+                    eval_morse();
+            }
+            return false;
+            break;
+        case MORSE_DASH:
+            if (record->event.pressed) {
+                morse_timer = timer_read();
+                morse_evaluated = false;
+                if (code == 0) {
+                    code = 3;
+                } else {
+                    code = code * 2 + 1;
+                }
+                // NOTE: allows quick eval, if using codes >= 64 then up this
+                if (code >= 32)
+                    eval_morse();
+            }
+            return false;
+            break;
+        default:
+            return true;
+            break;
+    }
+
+    return true;
 }
 
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
@@ -75,6 +204,16 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 rgb_matrix_set_color(led_indices[ltwo_flag - 1], 0, 108, 255);
             }
             break;
+        case _FIVE:
+            if (timer_morse_mode) {
+                rgb_matrix_set_color(0, 255, 0, 152);
+                rgb_matrix_set_color(1, 255, 0, 152);
+            } else {
+                rgb_matrix_set_color(0, 0, 108, 99);
+                rgb_matrix_set_color(1, 0, 108, 99);
+            }
+            rgb_matrix_set_color(led_indices[layer-1], 255, 168, 0);
+            break;
         case _META:
             rgb_matrix_set_color(5, 255, 168, 0);
             if (rgb_flag) {
@@ -82,7 +221,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             }
             break;
         case _RESET:
-            rgb_matrix_set_color(2, 36, 255, 99);// green
+            rgb_matrix_set_color(2, 0, 108, 255); // blue
             rgb_matrix_set_color(0, 255, 0, 152); // red
             break;
         case _MUSIC:
@@ -249,6 +388,13 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
                 tap_code16(C(S(KC_TAB)));
             }
             break;
+        case _FIVE:
+            if (clockwise) {
+                eval_morse();
+            } else {
+                tap_code16(KC_BSPC);
+            }
+            break;
         case _META:
             rgb_encoder(clockwise);
             break;
@@ -360,37 +506,26 @@ void layer_two_actions(int key_idx, bool release) {
 }
 
 void layer_three_actions(int key_idx, bool release) {
+    if (release) return;
+
     switch (key_idx) {
         case 1:
-            if (!release) {
-                tap_code16(G(KC_A));
-            }
+            tap_code16(G(KC_A));
             break;
         case 2:
-            if (!release) {
-                tap_code16(G(KC_C));
-            }
+            tap_code16(G(KC_C));
             break;
         case 3:
-            if (!release)
-                tap_code16(G(KC_V));
+            tap_code16(G(KC_V));
             break;
         case 4:
-            if (!release) {
-                tap_code16(G(KC_Z));
-            }
+            tap_code16(G(KC_Z));
             break;
         case 5:
-            if (!release) {
-                register_code(KC_5);
-            } else {
-                unregister_code(KC_5);
-            }
+            tap_code16(G(KC_S));
             break;
         case 6:
-            if (!release) {
-                tap_code16(G(S(KC_Z)));
-            }
+            tap_code16(G(S(KC_Z)));
             break;
     }
 }
@@ -428,23 +563,40 @@ void layer_four_actions(int key_idx, bool release) {
 void layer_five_actions(int key_idx, bool release) {
     if (release) return;
 
-    switch (key_idx) {
-        case 1:
-            break;
-        case 2:
-            break;
-        case 3:
-            break;
-        case 4:
-            tap_code16(G(S(KC_BSLS)));
-            break;
-        case 5:
-            tap_code16(G(A(KC_RBRC))); // toggle system theme
-            break;
-        case 6:
-            tap_code16(G(C(KC_Q))); // lock screen
-            break;
-    }
+    if (timer_morse_mode) {
+        switch (key_idx) {
+            case 1:
+                tap_code(KC_SPC);
+                break;
+            case 4:
+                tap_code(KC_BSPC);
+                break;
+            case 5:
+                break;
+            case 6:
+                tap_code(KC_ENT);
+                break;
+        }
+    } else {
+        switch (key_idx) {
+            case 1:
+                eval_morse();
+                break;
+            case 2: // morse keys
+            case 3:
+                break;
+            case 4:
+                // tap_code16(G(S(KC_BSLS))); // hammerspoon rotate monitor
+                tap_code16(G(C(KC_Q))); // lock screen
+                break;
+            case 5:
+                tap_code16(G(A(KC_RBRC))); // toggle system theme
+                break;
+            case 6:
+                tap_code16(G(C(KC_H))); // preview, annotet, highlight
+                break;
+        }
+        }
 }
 
 void layer_six_actions(int key_idx, bool release) {
@@ -569,6 +721,16 @@ void layer_three_hold_actions(int key_idx, bool release) {
     }
 }
 
+void layer_five_hold_actions(int key_idx, bool release) {
+    switch (key_idx) {
+        case 1:
+            if (!release) {
+                timer_morse_mode = !timer_morse_mode;
+            }
+            break;
+    }
+}
+
 void layer_eight_hold_actions(int key_idx, bool release) {
     if (release && (key_idx == 6 || key_idx == 4) && !l_eight_lock)
         layer_move(_DEFAULT);
@@ -598,7 +760,7 @@ void (*layer_hold_actions[9]) (int, bool) = {
     layer_two_actions,
     layer_three_hold_actions,
     layer_four_actions,
-    layer_five_actions,
+    layer_five_hold_actions,
     layer_six_actions,
     layer_seven_actions,
     layer_eight_hold_actions
