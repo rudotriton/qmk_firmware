@@ -1,4 +1,4 @@
-/* Copyright 2021 Jason Williams (Wilba)
+/* Copyright 2022 @rudotriton
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -13,7 +13,7 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-// Default layout for RAMA WORKS KARA
+
 #include QMK_KEYBOARD_H
 
 enum my_keycodes {
@@ -109,7 +109,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // numpad and arrow layer
   [_NUMPAD] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX,       XXXXXXX,         XXXXXXX,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
-  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      KC_WBAK, KC_WFWD, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), RSFT(KC_SCLN),   XXXXXXX, XXXXXXX, KC_TRNS,
+  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      XXXXXXX, XXXXXXX, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), RSFT(KC_SCLN),   XXXXXXX, XXXXXXX, KC_TRNS,
   XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,  KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT_T(KC_SCLN), KC_DEL,  KC_TRNS,
   KC_TRNS, LCTL(KC_DOWN), LCTL(KC_LEFT),   LCTL(KC_RGHT), LCTL(KC_UP), XXXXXXX,  KC_0,    RCMD_T(KC_1), KC_2,         KC_3,         XXXXXXX,         KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
