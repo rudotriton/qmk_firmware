@@ -23,6 +23,8 @@ uint16_t shift_opt_timer = 0;
 bool timer_morse_mode = false;
 bool morse_evaluated = true;
 uint16_t morse_timer = 0;
+uint16_t morse_hold_timer = 0;
+bool morse_held = false;
 bool to_move_win = false;
 int rgb_flag = 0;
 int ltwo_flag = 0;
@@ -38,7 +40,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_THREE] = double_taps,
     [_FOUR] = double_taps,
     [_FIVE] = LAYOUT( KC_TRNS,
-                     TD(TD_L_01), MORSE_DOT, MORSE_DASH,
+                     TD(TD_L_01), TD(TD_L_02), MORSE_KEY,
                      TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)
     ),
     [_META] = double_taps,
@@ -64,7 +66,7 @@ void matrix_scan_user(void) {
             is_shift_opt_active = false;
         }
     }
-    if (timer_morse_mode && !morse_evaluated) {
+    if (timer_morse_mode && !morse_evaluated && !morse_held) {
         if (timer_elapsed(morse_timer) > 250) {
             eval_morse();
         }
@@ -149,33 +151,32 @@ void eval_morse(void) {
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
-        case MORSE_DOT:
+        case MORSE_KEY:
             if (record->event.pressed) {
                 morse_timer = timer_read();
+                morse_hold_timer = timer_read();
                 morse_evaluated = false;
-                if (code == 0) {
-                    code = 2;
+                morse_held = true;
+            } else if (!record->event.pressed) {
+                morse_timer = timer_read();
+                morse_held = false;
+                if (timer_elapsed(morse_hold_timer) > 200) {
+                    if (code == 0) {
+                        code = 3;
+                    } else {
+                        code = code * 2 + 1;
+                    }
                 } else {
-                    code *= 2;
+                    if (code == 0) {
+                        code = 2;
+                    } else {
+                        code *= 2;
+                    }
                 }
                 // NOTE: allows quick eval, if using codes >= 64 then up this
                 if (code >= 32)
                     eval_morse();
-            }
-            return false;
-            break;
-        case MORSE_DASH:
-            if (record->event.pressed) {
-                morse_timer = timer_read();
-                morse_evaluated = false;
-                if (code == 0) {
-                    code = 3;
-                } else {
-                    code = code * 2 + 1;
-                }
-                // NOTE: allows quick eval, if using codes >= 64 then up this
-                if (code >= 32)
-                    eval_morse();
+
             }
             return false;
             break;
@@ -207,10 +208,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
         case _FIVE:
             if (timer_morse_mode) {
                 rgb_matrix_set_color(0, 255, 0, 152);
-                rgb_matrix_set_color(1, 255, 0, 152);
             } else {
                 rgb_matrix_set_color(0, 0, 108, 99);
-                rgb_matrix_set_color(1, 0, 108, 99);
             }
             rgb_matrix_set_color(led_indices[layer-1], 255, 168, 0);
             break;
@@ -566,12 +565,10 @@ void layer_five_actions(int key_idx, bool release) {
     if (timer_morse_mode) {
         switch (key_idx) {
             case 1:
-                tap_code(KC_SPC);
-                break;
-            case 4:
                 tap_code(KC_BSPC);
                 break;
-            case 5:
+            case 2:
+                tap_code(KC_SPC);
                 break;
             case 6:
                 tap_code(KC_ENT);
@@ -580,10 +577,11 @@ void layer_five_actions(int key_idx, bool release) {
     } else {
         switch (key_idx) {
             case 1:
-                eval_morse();
+                tap_code(KC_BSPC);
                 break;
-            case 2: // morse keys
-            case 3:
+            case 2:
+                eval_morse();
+            case 3: // morse key
                 break;
             case 4:
                 // tap_code16(G(S(KC_BSLS))); // hammerspoon rotate monitor
