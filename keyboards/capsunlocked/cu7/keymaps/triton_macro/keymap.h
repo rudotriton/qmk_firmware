@@ -16,26 +16,17 @@
 
 enum { TD_L_01, TD_L_02, TD_L_03, TD_L_04, TD_L_05, TD_L_06 };
 
-enum my_keycodes { MORSE_KEY = SAFE_RANGE };
-
 bool encoder_update_user(uint8_t index, bool clockwise);
 
 bool     is_cmd_tab_active;
 uint16_t cmd_tab_timer;
 bool     is_shift_opt_active;
 uint16_t shift_opt_timer;
-bool     timer_morse_mode;
-bool     morse_evaluated;
-uint16_t morse_timer;
-uint16_t morse_hold_timer;
-bool     morse_held;
 bool     to_move_win;
 int      rgb_flag;
 int      ltwo_flag;
 bool     l_eight_lock;
 int      led_indices[6];
-
-void eval_morse(void);
 
 void rgb_encoder(bool clockwise);
 void vim_encoder(bool clockwise);
