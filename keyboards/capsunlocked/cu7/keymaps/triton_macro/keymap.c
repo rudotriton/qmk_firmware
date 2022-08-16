@@ -16,41 +16,34 @@
 
 #include "keymap.h"
 
-bool is_cmd_tab_active = false;
-uint16_t cmd_tab_timer = 0;
-bool is_shift_opt_active = false; // small increment volume controls
-uint16_t shift_opt_timer = 0;
-bool timer_morse_mode = false;
-bool morse_evaluated = true;
-uint16_t morse_timer = 0;
-uint16_t morse_hold_timer = 0;
-bool morse_held = false;
-bool to_move_win = false;
-int rgb_flag = 0;
-int ltwo_flag = 0;
-bool l_eight_lock = false;
-int led_indices[] = { 2, 1, 0, 3, 4, 5 };
+bool     is_cmd_tab_active   = false;
+uint16_t cmd_tab_timer       = 0;
+bool     is_shift_opt_active = false; // small increment volume controls
+uint16_t shift_opt_timer     = 0;
+unsigned kc_index            = 0;
+bool     timer_morse_mode    = false;
+bool     morse_evaluated     = true;
+uint16_t morse_eval_timer    = 0;
+uint16_t morse_hold_timer    = 0;
+bool     morse_held          = false;
+bool     to_move_win         = false;
+int      rgb_flag            = 0;
+int      ltwo_flag           = 0;
+bool     l_eight_lock        = false;
+int      led_indices[]       = {2, 1, 0, 3, 4, 5};
 
-#define double_taps LAYOUT( KC_TRNS, TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
+#define double_taps LAYOUT(KC_TRNS, TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DEFAULT] = double_taps,
-    [_ONE] = double_taps,
-    [_TWO] = double_taps,
-    [_THREE] = double_taps,
-    [_FOUR] = double_taps,
-    [_FIVE] = LAYOUT( KC_TRNS,
-                     TD(TD_L_01), TD(TD_L_02), MORSE_KEY,
-                     TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)
-    ),
-    [_META] = double_taps,
-
-    [_RESET] = LAYOUT(
-                  KC_TRNS,
-    TO(_DEFAULT), KC_NO,   RESET,
-    KC_NO,        KC_NO,   KC_NO),
-
-    [_MUSIC] = double_taps,
+    [_ONE]     = double_taps,
+    [_TWO]     = double_taps,
+    [_THREE]   = double_taps,
+    [_FOUR]    = double_taps,
+    [_FIVE]    = LAYOUT(KC_TRNS, TD(TD_L_01), TD(TD_L_02), MORSE_KEY, TD(TD_L_04), TD(TD_L_05), TD(TD_L_06)),
+    [_META]    = double_taps,
+    [_RESET]   = LAYOUT(KC_TRNS, TO(_DEFAULT), KC_NO, RESET, KC_NO, KC_NO, KC_NO),
+    [_MUSIC]   = double_taps,
 };
 
 void matrix_scan_user(void) {
@@ -67,116 +60,110 @@ void matrix_scan_user(void) {
         }
     }
     if (timer_morse_mode && !morse_evaluated && !morse_held) {
-        if (timer_elapsed(morse_timer) > 250) {
+        if (timer_elapsed(morse_eval_timer) > 200) {
             eval_morse();
         }
     }
-
 }
 
-int morse_map[] = {
+int morse_kcs[] = {
     KC_SPC, // 0
-    KC_NO, // 1
-    KC_E, // 2
-    KC_T, // 3
-    KC_I, // 4
-    KC_A, // 5
-    KC_N, // 6
-    KC_M, // 7
-    KC_S, // 8
-    KC_U, // 9
-    KC_R, // 10
-    KC_W, // 11
-    KC_D, // 12
-    KC_K, // 13
-    KC_G, // 14
-    KC_O, // 15
-    KC_H, // 16
-    KC_V, // 17
-    KC_F, // 18
-    KC_NO, // 19
-    KC_L, // 20
-    KC_NO, // 21
-    KC_P, // 22
-    KC_J, // 23
-    KC_B, // 24
-    KC_X, // 25
-    KC_C, // 26
-    KC_Y, // 27
-    KC_Z, // 28
-    KC_Q, // 29
-    KC_NO, // 30
-    KC_NO, // 31
-    KC_5, // 32
-    KC_4, // 33
-    KC_NO, // 34
-    KC_3, // 35
-    KC_NO, // 36
-    KC_NO, // 37
-    KC_NO, // 38
-    KC_2, // 39
-    KC_NO, // 40
-    KC_NO, // 41
-    KC_NO, // 42
-    KC_NO, // 43
-    KC_NO, // 44
-    KC_NO, // 45
-    KC_NO, // 46
-    KC_1, // 47
-    KC_6, // 48
-    KC_NO, // 49
-    KC_NO, // 50
-    KC_NO, // 51
-    KC_NO, // 52
-    KC_NO, // 53
-    KC_NO, // 54
-    KC_NO, // 55
-    KC_7, // 56
-    KC_NO, // 57
-    KC_NO, // 58
-    KC_NO, // 59
-    KC_8, // 60
-    KC_NO, // 61
-    KC_9, // 62
-    KC_0, // 63
+    KC_NO,  // 1
+    KC_E,   // 2
+    KC_T,   // 3
+    KC_I,   // 4
+    KC_A,   // 5
+    KC_N,   // 6
+    KC_M,   // 7
+    KC_S,   // 8
+    KC_U,   // 9
+    KC_R,   // 10
+    KC_W,   // 11
+    KC_D,   // 12
+    KC_K,   // 13
+    KC_G,   // 14
+    KC_O,   // 15
+    KC_H,   // 16
+    KC_V,   // 17
+    KC_F,   // 18
+    KC_NO,  // 19
+    KC_L,   // 20
+    KC_NO,  // 21
+    KC_P,   // 22
+    KC_J,   // 23
+    KC_B,   // 24
+    KC_X,   // 25
+    KC_C,   // 26
+    KC_Y,   // 27
+    KC_Z,   // 28
+    KC_Q,   // 29
+    KC_NO,  // 30
+    KC_NO,  // 31
+    KC_5,   // 32
+    KC_4,   // 33
+    KC_NO,  // 34
+    KC_3,   // 35
+    KC_NO,  // 36
+    KC_NO,  // 37
+    KC_NO,  // 38
+    KC_2,   // 39
+    KC_NO,  // 40
+    KC_NO,  // 41
+    KC_NO,  // 42
+    KC_NO,  // 43
+    KC_NO,  // 44
+    KC_NO,  // 45
+    KC_NO,  // 46
+    KC_1,   // 47
+    KC_6,   // 48
+    KC_NO,  // 49
+    KC_NO,  // 50
+    KC_NO,  // 51
+    KC_NO,  // 52
+    KC_NO,  // 53
+    KC_NO,  // 54
+    KC_NO,  // 55
+    KC_7,   // 56
+    KC_NO,  // 57
+    KC_NO,  // 58
+    KC_NO,  // 59
+    KC_8,   // 60
+    KC_NO,  // 61
+    KC_9,   // 62
+    KC_0,   // 63
 };
 
-unsigned code = 0;
-
 void eval_morse(void) {
-    tap_code(morse_map[code]);
+    tap_code(morse_kcs[kc_index]);
     morse_evaluated = true;
-    code = 0;
+    kc_index            = 0;
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case MORSE_KEY:
             if (record->event.pressed) {
-                morse_timer = timer_read();
                 morse_hold_timer = timer_read();
-                morse_evaluated = false;
-                morse_held = true;
+                morse_evaluated  = false;
+                morse_held       = true;
             } else if (!record->event.pressed) {
-                morse_timer = timer_read();
-                morse_held = false;
+                morse_eval_timer = timer_read();
+                morse_held  = false;
                 if (timer_elapsed(morse_hold_timer) > 200) {
-                    if (code == 0) {
-                        code = 3;
+                    if (kc_index == 0) {
+                        kc_index = 3;
                     } else {
-                        code = code * 2 + 1;
+                        kc_index = kc_index * 2 + 1;
                     }
                 } else {
-                    if (code == 0) {
-                        code = 2;
+                    if (kc_index == 0) {
+                        kc_index = 2;
                     } else {
-                        code *= 2;
+                        kc_index *= 2;
                     }
                 }
                 // NOTE: allows quick eval, if using codes >= 64 then up this
-                if (code >= 32)
-                    eval_morse();
-
+                if (kc_index >= 32) eval_morse();
             }
             return false;
             break;
@@ -211,7 +198,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             } else {
                 rgb_matrix_set_color(0, 0, 108, 99);
             }
-            rgb_matrix_set_color(led_indices[layer-1], 255, 168, 0);
+            rgb_matrix_set_color(led_indices[layer - 1], 255, 168, 0);
             break;
         case _META:
             rgb_matrix_set_color(5, 255, 168, 0);
@@ -228,13 +215,13 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             rgb_matrix_set_color(5, 255, 168, 0);
             break;
         default:
-            rgb_matrix_set_color(led_indices[layer-1], 255, 168, 0);
+            rgb_matrix_set_color(led_indices[layer - 1], 255, 168, 0);
             break;
     }
 }
 
 void keyboard_post_init_user(void) {
-    rgb_matrix_enable_noeeprom();  // enables rgb, without saving settings
+    rgb_matrix_enable_noeeprom(); // enables rgb, without saving settings
     rgb_matrix_sethsv_noeeprom(180, 255, 200);
     rgb_matrix_set_speed_noeeprom(25);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
@@ -242,12 +229,7 @@ void keyboard_post_init_user(void) {
 
 // Associate our tap dance key with its functionality
 qk_tap_dance_action_t tap_dance_actions[] = {
-    [TD_L_01] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_one_finished, key_one_reset),
-    [TD_L_02] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_two_finished, key_two_reset),
-    [TD_L_03] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_three_finished, key_three_reset),
-    [TD_L_04] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_four_finished, key_four_reset),
-    [TD_L_05] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_five_finished, key_five_reset),
-    [TD_L_06] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_six_finished, key_six_reset),
+    [TD_L_01] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_one_finished, key_one_reset), [TD_L_02] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_two_finished, key_two_reset), [TD_L_03] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_three_finished, key_three_reset), [TD_L_04] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_four_finished, key_four_reset), [TD_L_05] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_five_finished, key_five_reset), [TD_L_06] = ACTION_TAP_DANCE_FN_ADVANCED(NULL, key_six_finished, key_six_reset),
 };
 
 void rgb_encoder(bool clockwise) {
@@ -399,9 +381,9 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             break;
         case _MUSIC:
             if (clockwise) {
-                  tap_code16(S(KC_RGHT));
-              } else {
-                  tap_code16(S(KC_LEFT));
+                tap_code16(S(KC_RGHT));
+            } else {
+                tap_code16(S(KC_LEFT));
             }
             break;
     }
@@ -467,8 +449,7 @@ void layer_one_actions(int key_idx, bool release) {
             }
             break;
         case 4:
-            if (!release)
-                tap_code16(G(A(KC_V)));
+            if (!release) tap_code16(G(A(KC_V)));
             break;
         case 5:
             if (release)
@@ -484,7 +465,6 @@ void layer_one_actions(int key_idx, bool release) {
             else
                 register_code16(KC_F11);
             break;
-
     }
 }
 
@@ -594,7 +574,7 @@ void layer_five_actions(int key_idx, bool release) {
                 tap_code16(G(C(KC_H))); // preview, annotet, highlight
                 break;
         }
-        }
+    }
 }
 
 void layer_six_actions(int key_idx, bool release) {
@@ -611,8 +591,7 @@ void layer_six_actions(int key_idx, bool release) {
 }
 
 void layer_seven_actions(int key_idx, bool release) {
-    if (key_idx == 6 && release)
-        layer_move(_META);
+    if (key_idx == 6 && release) layer_move(_META);
 }
 
 // some spotify actions
@@ -646,17 +625,7 @@ void layer_eight_actions(int key_idx, bool release) {
     }
 }
 
-void (*layer_actions[9]) (int, bool) = {
-    default_actions,
-    layer_one_actions,
-    layer_two_actions,
-    layer_three_actions,
-    layer_four_actions,
-    layer_five_actions,
-    layer_six_actions,
-    layer_seven_actions,
-    layer_eight_actions
-};
+void (*layer_actions[9])(int, bool) = {default_actions, layer_one_actions, layer_two_actions, layer_three_actions, layer_four_actions, layer_five_actions, layer_six_actions, layer_seven_actions, layer_eight_actions};
 
 void default_hold_actions(int key_idx, bool release) {
     if (release) return;
@@ -730,8 +699,7 @@ void layer_five_hold_actions(int key_idx, bool release) {
 }
 
 void layer_eight_hold_actions(int key_idx, bool release) {
-    if (release && (key_idx == 6 || key_idx == 4) && !l_eight_lock)
-        layer_move(_DEFAULT);
+    if (release && (key_idx == 6 || key_idx == 4) && !l_eight_lock) layer_move(_DEFAULT);
     if (release) return;
     switch (key_idx) {
         case 1:
@@ -752,38 +720,30 @@ void layer_eight_hold_actions(int key_idx, bool release) {
     }
 }
 
-void (*layer_hold_actions[9]) (int, bool) = {
-    default_hold_actions,
-    layer_one_hold_actions,
-    layer_two_actions,
-    layer_three_hold_actions,
-    layer_four_actions,
-    layer_five_hold_actions,
-    layer_six_actions,
-    layer_seven_actions,
-    layer_eight_hold_actions
-};
+void (*layer_hold_actions[9])(int, bool) = {default_hold_actions, layer_one_hold_actions, layer_two_actions, layer_three_hold_actions, layer_four_actions, layer_five_hold_actions, layer_six_actions, layer_seven_actions, layer_eight_hold_actions};
 
 void tap_key_switch(int key_idx, bool release) {
-    (*layer_actions[get_layer()]) (key_idx, release);
+    (*layer_actions[get_layer()])(key_idx, release);
 }
 
 void hold_key_switch(int key_idx, bool release) {
-    (*layer_hold_actions[get_layer()]) (key_idx, release);
+    (*layer_hold_actions[get_layer()])(key_idx, release);
 }
 
 // Determine the current tap dance state
 td_state_t cur_dance(qk_tap_dance_state_t *state) {
     if (state->count == 1) {
-        if (state->interrupted || !state->pressed)
-            return TD_SINGLE_TAP;
+        if (state->interrupted || !state->pressed) return TD_SINGLE_TAP;
         // Key has not been interrupted, but the key is still held. Means you want to send a 'HOLD'.
-        else return TD_SINGLE_HOLD;
-    } else if (state->count == 2) return TD_DOUBLE_TAP;
-    else return TD_UNKNOWN;
+        else
+            return TD_SINGLE_HOLD;
+    } else if (state->count == 2)
+        return TD_DOUBLE_TAP;
+    else
+        return TD_UNKNOWN;
 }
 
-void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer) (void)) {
+void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_idx, int target_layer, void (*setup_layer)(void)) {
     key_tap_state->state = cur_dance(state);
     switch (key_tap_state->state) {
         case TD_SINGLE_HOLD:
@@ -797,8 +757,7 @@ void key_finished(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, int key_
                 layer_move(_DEFAULT);
             } else {
                 layer_move(target_layer);
-                if (setup_layer != NULL)
-                setup_layer();
+                if (setup_layer != NULL) setup_layer();
             }
             break;
         default:
@@ -815,10 +774,7 @@ void key_reset(td_tap_t *key_tap_state, qk_tap_dance_state_t *state, void *user_
     key_tap_state->state = TD_NONE;
 }
 
-static td_tap_t key_one_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_one_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 void key_one_finished(qk_tap_dance_state_t *state, void *user_data) {
     key_finished(&key_one_tap_state, state, 1, _ONE, NULL);
@@ -828,10 +784,7 @@ void key_one_reset(qk_tap_dance_state_t *state, void *user_data) {
     key_reset(&key_one_tap_state, state, user_data, 1);
 }
 
-static td_tap_t key_two_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_two_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 void setup_l_two(void) {
     ltwo_flag = 0;
@@ -846,10 +799,7 @@ void key_two_reset(qk_tap_dance_state_t *state, void *user_data) {
     key_reset(&key_two_tap_state, state, user_data, 2);
 }
 
-static td_tap_t key_three_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_three_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 // Functions that control what our tap dance key does
 void key_three_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -860,10 +810,7 @@ void key_three_reset(qk_tap_dance_state_t *state, void *user_data) {
     key_reset(&key_three_tap_state, state, user_data, 3);
 }
 
-static td_tap_t key_four_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_four_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 // Functions that control what our tap dance key does
 void key_four_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -874,10 +821,7 @@ void key_four_reset(qk_tap_dance_state_t *state, void *user_data) {
     key_reset(&key_four_tap_state, state, user_data, 4);
 }
 
-static td_tap_t key_five_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_five_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 // Functions that control what our tap dance key does
 void key_five_finished(qk_tap_dance_state_t *state, void *user_data) {
@@ -888,10 +832,7 @@ void key_five_reset(qk_tap_dance_state_t *state, void *user_data) {
     key_reset(&key_five_tap_state, state, user_data, 5);
 }
 
-static td_tap_t key_six_tap_state = {
-    .is_press_action = true,
-    .state = TD_NONE
-};
+static td_tap_t key_six_tap_state = {.is_press_action = true, .state = TD_NONE};
 
 void setup_l_six(void) {
     rgb_flag = 0;
