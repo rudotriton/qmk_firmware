@@ -49,12 +49,14 @@
 // COL2ROW or ROW2COL
 #define DIODE_DIRECTION COL2ROW
 
+// Taps
+// mod taps and laye taps
+#define TAPPING_TERM 175
+#define PERMISSIV_HOLD // as hold when anothe key is tapped within tapping_term
 #define IGNORE_MOD_TAP_INTERRUPT
 
+// keys can be double tapped without them repeting on the second tap
 #define TAPPING_FORCE_HOLD_PER_KEY
-
-// Tapping term
-#define TAPPING_TERM 200
 
 // Set 0 if debouncing isn't needed
 #define DEBOUNCE 5

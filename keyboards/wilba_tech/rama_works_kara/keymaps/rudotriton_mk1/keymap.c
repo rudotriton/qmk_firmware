@@ -292,6 +292,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 }
 
 // keys that can be double tapped without them repeting on the second tap
+// the key is used as a shortcut in vim, after which i need to press it again to toggle layers
+// a tap hold by default would repeat the key instead
 bool get_tapping_force_hold(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case LT(_NUMPAD, KC_R): // vim double-tap replace with number
