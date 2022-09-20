@@ -283,7 +283,12 @@ void default_actions(int key_idx, bool release) {
             tap_code(KC_MUTE);
             break;
         case 6:
-            tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
+            if (is_shift_opt_active) {
+                is_shift_opt_active = false;
+                unregister_mods(MOD_MASK_SA);
+            } else {
+                tap_code16(G(S(KC_RBRC))); // open spotify w/ BTT
+            }
             break;
     }
 }
