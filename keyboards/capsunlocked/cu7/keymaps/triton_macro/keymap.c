@@ -488,14 +488,7 @@ void layer_eight_actions(int key_idx, bool release) {
 void (*layer_actions[9])(int, bool) = {default_actions, layer_one_actions, layer_two_actions, layer_three_actions, layer_four_actions, layer_five_actions, layer_six_actions, layer_seven_actions, layer_eight_actions};
 
 void default_hold_actions(int key_idx, bool release) {
-    if (release) return;
     switch (key_idx) {
-        case 1:
-            tap_code16(G(KC_S)); // shuffle
-            break;
-        case 3:
-            tap_code16(G(KC_R)); // repeat
-            break;
         case 6:
             l_eight_lock = false;
             layer_move(_MUSIC);
