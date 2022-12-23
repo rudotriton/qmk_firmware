@@ -117,7 +117,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   [_MOUSE] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
   XXXXXXX, XXXXXXX, KC_WH_U, KC_MS_U, KC_WH_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN3, XXXXXXX, XXXXXXX, KC_TRNS,
+  LCMD(KC_LBRC), KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN3, XXXXXXX, XXXXXXX, KC_TRNS,
   KC_TRNS, XXXXXXX, KC_WH_L, XXXXXXX, KC_WH_R, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
@@ -365,7 +365,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
                 rgb_matrix_set_color(leds[_SYMBOLS], 255, 168, 0);
                 break;
             case _NUMPAD:
-                rgb_matrix_set_color(12, 255, 168, 0);
+                rgb_matrix_set_color(leds[_NUMPAD], 255, 168, 0);
                 break;
             case _MOUSE:
                 rgb_matrix_set_color(leds[_MOUSE], 255, 168, 0);
@@ -381,7 +381,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 }
 
 void keyboard_post_init_user(void) {
-    hue           = 180;
+    // hue           = 180;
+    hue           = 14;
     saturation    = 255;
     value         = 200;
     speed         = 25;
