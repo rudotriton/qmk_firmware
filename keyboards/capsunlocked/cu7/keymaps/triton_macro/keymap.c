@@ -23,11 +23,10 @@ uint16_t shift_opt_timer     = 0;
 bool     to_move_win         = false;
 int      rgb_flag            = 0;
 int      ltwo_flag           = 0;
-int      lthree_flag         = 0;
 bool     l_eight_lock        = false;
 int      led_indices[]       = {2, 1, 0, 3, 4, 5};
 
-#define double_taps LAYOUT(KC_TRNS, TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
+#define double_taps LAYOUT(RGUI(RCTL(KC_Q)), TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DEFAULT] = double_taps,
@@ -76,9 +75,6 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
             break;
         case _THREE:
             rgb_matrix_set_color(0, 255, 168, 0);
-            if (lthree_flag) {
-                rgb_matrix_set_color(led_indices[lthree_flag - 1], 0, 108, 255);
-            }
             break;
         case _FIVE:
             rgb_matrix_set_color(led_indices[layer - 1], 255, 168, 0);
@@ -216,18 +212,6 @@ void vim_encoder(bool clockwise) {
     }
 }
 
-void lthree_encoder(bool clockwise) {
-    switch (lthree_flag) {
-        case 4:
-            if (clockwise) {
-                tap_code16(G(S(KC_Z)));
-            } else {
-                tap_code16(G(KC_Z));
-            }
-            break;
-    }
-}
-
 bool encoder_update_user(uint8_t index, bool clockwise) {
     switch (get_layer()) {
         case _DEFAULT: // volume up/down
@@ -258,7 +242,11 @@ bool encoder_update_user(uint8_t index, bool clockwise) {
             vim_encoder(clockwise);
             break;
         case _THREE:
-            lthree_encoder(clockwise);
+            if (clockwise) {
+                tap_code16(G(S(KC_Z)));
+            } else {
+                tap_code16(G(KC_Z));
+            }
             break;
         case _FOUR: // cycle browser tabs
             if (clockwise) {
@@ -397,7 +385,6 @@ void layer_three_actions(int key_idx, bool release) {
             break;
         case 4:
             if (release) return;
-            lthree_flag = lthree_flag == 4 ? 0 : 4;
             break;
         case 5:
             tap_code16(G(KC_S));
@@ -445,7 +432,7 @@ void layer_five_actions(int key_idx, bool release) {
         case 2:
             break;
         case 3:
-            tap_code16(G(C(KC_H))); // preview, annotet, highlight
+            tap_code16(G(C(KC_H))); // preview, annotate, highlight
             break;
         case 4:
             // tap_code16(G(S(KC_BSLS))); // hammerspoon rotate monitor
