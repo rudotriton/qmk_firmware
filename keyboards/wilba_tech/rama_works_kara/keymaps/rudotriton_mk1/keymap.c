@@ -177,7 +177,8 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                 }
             }
-            break;
+            return false; // skip further processing of this keycode
+        // e.g. you can do KC_ENTER and ret true which does your action as well as the usual enter key stuff
         case TEST_PREV_LED:
             if (record->event.pressed && LED_DEBUG) {
                 if (--test_color < 0) {
@@ -187,12 +188,12 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                 }
             }
-            break;
+            return false;
         case LED_DEBUG_TOG:
             if (record->event.pressed) {
               LED_DEBUG = LED_DEBUG ? false : true;
         }
-            break;
+            return false;
         case RM_TOG:
             if (record->event.pressed) {
                 rgb_matrix_toggle_noeeprom();
@@ -202,89 +203,75 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 }
             }
             return false;  // Skip all further processing of this key
-            break;
         case RM_LCL:
             if (record->event.pressed) {
               to_color_layers = to_color_layers ? false : true;
             }
             return false;
-            break;
         case RM_ICL:
             if (record->event.pressed) {
               to_color_indicators = to_color_indicators ? false : true;
             }
             return false;
-            break;
         case RM_MCL:
             if (record->event.pressed) {
               to_color_meta = to_color_meta ? false : true;
             }
             return false;
-            break;
         case RM_MOD:
             if (record->event.pressed) {
                 rgb_matrix_step_noeeprom();
                 last_mode = rgb_matrix_get_mode();
             }
             return false;
-            break;
         case RM_RMOD:
             if (record->event.pressed) {
                 rgb_matrix_step_reverse_noeeprom();
                 last_mode = rgb_matrix_get_mode();
             }
             return false;
-            break;
         case RM_HDE:
             if (record->event.pressed) {
                 rgb_matrix_decrease_hue_noeeprom();
             }
             return false;
-            break;
         case RM_HIN:
             if (record->event.pressed) {
                 rgb_matrix_increase_hue_noeeprom();
             }
             return false;
-            break;
         case RM_SDE:
             if (record->event.pressed) {
                 rgb_matrix_decrease_sat_noeeprom();
             }
             return false;
-            break;
         case RM_SIN:
             if (record->event.pressed) {
                 rgb_matrix_increase_sat_noeeprom();
             }
             return false;
-            break;
         case RM_VDE:
             if (record->event.pressed) {
                 rgb_matrix_decrease_val_noeeprom();
             }
             return false;
-            break;
         case RM_VIN:
             if (record->event.pressed) {
                 rgb_matrix_increase_val_noeeprom();
             }
             return false;
-            break;
         case RM_SPD:
             if (record->event.pressed) {
                 rgb_matrix_decrease_speed_noeeprom();
                 speed = rgb_matrix_get_speed();
             }
             return false;
-            break;
         case RM_SPI:
             if (record->event.pressed) {
                 rgb_matrix_increase_speed_noeeprom();
                 speed = rgb_matrix_get_speed();
             }
             return false;
-            break;
         default:
             return true;  // Process all other keycodes normally
     }
@@ -345,6 +332,7 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
       switch(get_highest_layer(layer_state|default_layer_state)) {
             case _FNBOTH:
                 rgb_matrix_set_color(leds[_FNBOTH], 255, 73, 173);
+                rgb_matrix_set_color(23, 255, 50, 50); // mark the reset key led
                 break;
             case _FNONE:
                 rgb_matrix_set_color(leds[_FNONE], 255, 168, 0);
@@ -381,8 +369,8 @@ void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
 }
 
 void keyboard_post_init_user(void) {
-    // hue           = 180;
-    hue           = 14;
+    hue           = 180;
+    // hue           = 14;
     saturation    = 255;
     value         = 200;
     speed         = 25;

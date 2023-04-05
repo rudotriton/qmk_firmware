@@ -29,15 +29,7 @@ int      led_indices[]       = {2, 1, 0, 3, 4, 5};
 #define double_taps LAYOUT(RGUI(RCTL(KC_Q)), TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
-    [_DEFAULT] = double_taps,
-    [_ONE]     = double_taps,
-    [_TWO]     = double_taps,
-    [_THREE]   = double_taps,
-    [_FOUR]    = double_taps,
-    [_FIVE]    = double_taps,
-    [_META]    = double_taps,
-    [_RESET]   = LAYOUT(KC_TRNS, TO(_DEFAULT), KC_NO, RESET, KC_NO, KC_NO, KC_NO),
-    [_MUSIC]   = double_taps,
+    [_DEFAULT] = double_taps, [_ONE] = double_taps, [_TWO] = double_taps, [_THREE] = double_taps, [_FOUR] = double_taps, [_FIVE] = double_taps, [_META] = double_taps, [_RESET] = LAYOUT(KC_TRNS, TO(_DEFAULT), KC_NO, RESET, KC_NO, KC_NO, KC_NO), [_MUSIC] = double_taps,
 };
 
 void matrix_scan_user(void) {
@@ -54,7 +46,6 @@ void matrix_scan_user(void) {
         }
     }
 }
-
 
 void rgb_matrix_indicators_advanced_user(uint8_t led_min, uint8_t led_max) {
     int layer = get_layer();
@@ -384,12 +375,13 @@ void layer_three_actions(int key_idx, bool release) {
             tap_code16(G(KC_V));
             break;
         case 4:
-            if (release) return;
+            tap_code(KC_LEFT);
             break;
         case 5:
             tap_code16(G(KC_S));
             break;
         case 6:
+            tap_code(KC_RIGHT);
             break;
     }
 }
@@ -414,12 +406,9 @@ void layer_four_actions(int key_idx, bool release) {
             tap_code16(G(S(KC_T))); // reopen last closed tab
             break;
         case 6:
-            // copy, open new tab, paste, enter
+            // copy text and run btt shortcut
             tap_code16(G(KC_C));
-            tap_code16(G(A(KC_J))); // launch firefox w/ betterTouchTool
-            tap_code16(G(KC_T));
-            tap_code16(G(KC_V));
-            tap_code(KC_ENT);
+            tap_code16(G(A(KC_J)));
             break;
     }
 }
@@ -435,8 +424,6 @@ void layer_five_actions(int key_idx, bool release) {
             tap_code16(G(C(KC_H))); // preview, annotate, highlight
             break;
         case 4:
-            // tap_code16(G(S(KC_BSLS))); // hammerspoon rotate monitor
-            tap_code16(G(C(KC_Q))); // lock screen
             break;
         case 5:
             tap_code16(G(A(KC_RBRC))); // toggle system theme
