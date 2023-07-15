@@ -14,6 +14,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "quantum_keycodes.h"
 #include QMK_KEYBOARD_H
 
 enum my_keycodes {
@@ -71,10 +72,10 @@ enum {
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // Default layer
   [_COLEMAKM] = LAYOUT_60_hhkb(
-  KC_ESC,        KC_1,              KC_2,              KC_3,         KC_4,               KC_5, KC_6, KC_7,                KC_8,         KC_9,              KC_0,                KC_MINS, KC_EQL,  KC_BSLS, KC_DEL,
-  KC_TAB,        LT(_MOUSE, KC_Q),  LCTL_T(KC_W),      LCTL_T(KC_F), KC_P,               KC_G, KC_J, KC_L,                RCTL_T(KC_U), RCTL_T(KC_Y),      LT(_MOUSE, KC_SCLN), KC_LBRC, KC_RBRC, KC_BSPC,
-  CTL_T(KC_ESC), LSFT_T(KC_A),      LT(_NUMPAD, KC_R), LALT_T(KC_S), LT(_SYMBOLS, KC_T), KC_D, KC_H, LT(_SYMBOLS, KC_N),  RALT_T(KC_E), LT(_NUMPAD, KC_I), RSFT_T(KC_O),        LT(_FNONE, KC_QUOT), KC_ENT,
-  KC_LSFT,       LT(_NUMPAD, KC_Z), KC_X,              KC_C,         LCMD_T(KC_V),       KC_B, KC_K, RCMD_T(KC_M),        KC_COMM,      KC_DOT,            KC_SLSH,             KC_RSFT, TD(TD_FN_01),
+  KC_ESC,        KC_1,              KC_2,              KC_3,         KC_4,               KC_5, KC_6,   KC_7,               KC_8,         KC_9,              KC_0,                KC_MINS, KC_EQL,  KC_BSLS, KC_DEL,
+  KC_TAB,        LT(_MOUSE, KC_Q),  LCTL_T(KC_W),      LCTL_T(KC_F), KC_P,               KC_G, KC_J,   KC_L,               RCTL_T(KC_U), RCTL_T(KC_Y),      LT(_MOUSE, KC_SCLN), KC_LBRC, KC_RBRC, KC_BSPC,
+  CTL_T(KC_ESC), LSFT_T(KC_A),      LT(_NUMPAD, KC_R), LALT_T(KC_S), LT(_SYMBOLS, KC_T), KC_D, KC_H,   LT(_SYMBOLS, KC_N), RALT_T(KC_E), LT(_NUMPAD, KC_I), RSFT_T(KC_O),        LT(_FNONE, KC_QUOT), KC_ENT,
+  KC_LSFT,       LT(_NUMPAD, KC_Z), KC_X,              KC_C,         LCMD_T(KC_V),       HYPR_T(KC_B), HYPR_T(KC_K),       RCMD_T(KC_M),        KC_COMM,      KC_DOT,            KC_SLSH,             KC_RSFT, TD(TD_FN_01),
   KC_LALT, KC_LCMD,                                          KC_SPC,                            KC_RCMD, TD(TD_FN_02)),
 
   [_QWERTYM] = LAYOUT_60_hhkb(
@@ -101,22 +102,22 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // we cannot have mods here, since mod-taps are limited to just basic keycodes
   [_SYMBOLS] = LAYOUT_60_hhkb(
   KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
-  XXXXXXX, KC_ESC,  KC_HASH, KC_LPRN, KC_RPRN, KC_PIPE, KC_CIRC, KC_MINS, KC_EQL,  KC_ASTR, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
+  XXXXXXX, XXXXXXX, KC_HASH, KC_LPRN, KC_RPRN, KC_PIPE, KC_CIRC, KC_MINS, KC_EQL,  KC_ASTR, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
   KC_CAPS, KC_EXLM, KC_GRV,  KC_LBRC, KC_RBRC, KC_AT,   KC_BSLS, KC_UNDS, KC_PERC, KC_DLR,  KC_QUES, XXXXXXX, KC_TRNS,
-  KC_TRNS, XXXXXXX, KC_TILD, KC_LCBR, KC_RCBR, KC_ENT,  KC_AMPR, KC_PLUS, KC_QUOT, KC_DQUO, XXXXXXX, KC_TRNS, KC_TRNS,
+  KC_TRNS, KC_ESC,  KC_TILD, KC_LCBR, KC_RCBR, KC_ENT,  KC_AMPR, KC_PLUS, KC_QUOT, KC_DQUO, XXXXXXX, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_ENT,                            KC_TRNS, KC_TRNS),
 
   // numpad and arrow layer
   [_NUMPAD] = LAYOUT_60_hhkb(
-  KC_TRNS, XXXXXXX,       XXXXXXX,         XXXXXXX,       XXXXXXX,     XXXXXXX, XXXXXXX, XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,         XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
-  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      XXXXXXX, XXXXXXX, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), RSFT(KC_SCLN),   XXXXXXX, XXXXXXX, KC_TRNS,
-  XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,  KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT_T(KC_SCLN), KC_DEL,  KC_TRNS,
-  KC_TRNS, LCTL(KC_DOWN), LCTL(KC_LEFT),   LCTL(KC_RGHT), LCTL(KC_UP), XXXXXXX,  KC_0,    RCMD_T(KC_1), KC_2,         KC_3,         XXXXXXX,         KC_TRNS, KC_TRNS,
+  KC_TRNS, XXXXXXX,       XXXXXXX,         XXXXXXX,       XXXXXXX,     XXXXXXX,  XXXXXXX, XXXXXXX,      XXXXXXX,      XXXXXXX,      XXXXXXX,       XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS,
+  XXXXXXX, XXXXXXX,       LCTL_T(KC_HOME), KC_UP,         KC_END,      KC_PGUP,  XXXXXXX, KC_7,         RCTL_T(KC_8), RCTL_T(KC_9), XXXXXXX,       XXXXXXX, XXXXXXX, KC_TRNS,
+  XXXXXXX, KC_TAB,        KC_LEFT,         KC_DOWN,       KC_RIGHT,    KC_ESC,   KC_BSPC, KC_4,         RALT_T(KC_5), KC_6,         RSFT(KC_SCLN), KC_DEL,  KC_TRNS,
+  KC_TRNS, LCTL(KC_DOWN), LCTL(KC_LEFT),   LCTL(KC_RGHT), LCTL(KC_UP), KC_PGDN,  KC_0,    RCMD_T(KC_1), KC_2,         KC_3,         KC_COLN,       KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),
 
   [_MOUSE] = LAYOUT_60_hhkb(
-  KC_TRNS, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
-  XXXXXXX, XXXXXXX, KC_WH_U, KC_MS_U, KC_WH_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX,
+  KC_TRNS,    KC_1, KC_2,    KC_3,    KC_4,    KC_5,    KC_6,    KC_7,    KC_8,    KC_9,    KC_0, KC_MINS, KC_EQL, KC_BSLS, KC_DEL,
+  XXXXXXX, XXXXXXX, KC_WH_U, KC_MS_U, KC_WH_D, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN2, KC_ACL1, XXXXXXX, XXXXXXX, XXXXXXX,
   LCMD(KC_LBRC), KC_BTN1, KC_MS_L, KC_MS_D, KC_MS_R, XXXXXXX, XXXXXXX, XXXXXXX, KC_BTN1, KC_BTN3, XXXXXXX, XXXXXXX, KC_TRNS,
   KC_TRNS, XXXXXXX, KC_WH_L, XXXXXXX, KC_WH_R, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, XXXXXXX, KC_TRNS, KC_TRNS,
   KC_TRNS, KC_TRNS,                            KC_SPC,                            KC_TRNS, KC_TRNS),

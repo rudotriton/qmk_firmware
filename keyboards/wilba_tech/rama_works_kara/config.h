@@ -18,8 +18,8 @@
 #include "config_common.h"
 
 // USB Device descriptor parameter
-#define VENDOR_ID 0x5241   // "RA"
-#define PRODUCT_ID 0x4B52  // "KR"
+#define VENDOR_ID 0x5241  // "RA"
+#define PRODUCT_ID 0x4B52 // "KR"
 #define DEVICE_VER 0x0001
 #define MANUFACTURER RAMA WORKS
 #define PRODUCT RAMA WORKS KARA

@@ -275,10 +275,9 @@ void default_actions(int key_idx, bool release) {
             tap_code(KC_MNXT);
             break;
         case 4:
-            // Switch to Kitty and hide other windows
+            // open terminal w/ BTT
             tap_code(KC_ESC);
             tap_code16(G(C(KC_M)));
-            tap_code16(G(A(KC_H)));
             break;
         case 5:
             tap_code(KC_MUTE);
