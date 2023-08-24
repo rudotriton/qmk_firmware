@@ -15,8 +15,9 @@
  */
 
 #include "keymap.h"
+#include "action.h"
 
-bool     is_cmd_tab_active   = false;
+bool     is_cmd_tab_active   = false; // application cycling
 uint16_t cmd_tab_timer       = 0;
 bool     is_shift_opt_active = false; // small increment volume controls
 uint16_t shift_opt_timer     = 0;
@@ -26,7 +27,7 @@ int      ltwo_flag           = 0;
 bool     l_eight_lock        = false;
 int      led_indices[]       = {2, 1, 0, 3, 4, 5};
 
-#define double_taps LAYOUT(RGUI(RCTL(KC_Q)), TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
+#define double_taps LAYOUT(ENC_KEY, TD(TD_L_01), TD(TD_L_02), TD(TD_L_03), TD(TD_L_04), TD(TD_L_05), TD(TD_L_06))
 
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
     [_DEFAULT] = double_taps, [_ONE] = double_taps, [_TWO] = double_taps, [_THREE] = double_taps, [_FOUR] = double_taps, [_FIVE] = double_taps, [_META] = double_taps, [_RESET] = LAYOUT(KC_TRNS, TO(_DEFAULT), KC_NO, RESET, KC_NO, KC_NO, KC_NO), [_MUSIC] = double_taps,
@@ -95,6 +96,22 @@ void keyboard_post_init_user(void) {
     rgb_matrix_sethsv_noeeprom(180, 255, 200);
     rgb_matrix_set_speed_noeeprom(25);
     rgb_matrix_mode_noeeprom(RGB_MATRIX_SOLID_COLOR);
+}
+
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case ENC_KEY:
+            if (is_shift_opt_active) {
+                unregister_mods(MOD_MASK_SA);
+            }
+            if (is_cmd_tab_active) {
+                unregister_code(KC_RCMD);
+            }
+            tap_code16(RGUI(RCTL(KC_Q)));
+
+            return false;
+    }
+    return true;
 }
 
 // Associate our tap dance key with its functionality
@@ -413,21 +430,34 @@ void layer_four_actions(int key_idx, bool release) {
 }
 
 void layer_five_actions(int key_idx, bool release) {
-    if (release) return;
+    // if (release) return;
 
     switch (key_idx) {
         case 1:
         case 2:
             break;
         case 3:
-            tap_code16(G(C(KC_H))); // preview, annotate, highlight
+            if (!release) {
+                tap_code16(G(C(KC_H))); // preview, annotate, highlight
+            }
             break;
         case 4:
+            if (!release) {
+                register_code(KC_DOWN);
+            } else {
+                unregister_code(KC_DOWN);
+            }
             break;
         case 5:
             tap_code16(G(A(KC_RBRC))); // toggle system theme
             break;
         case 6:
+
+            if (!release) {
+                register_code(KC_UP);
+            } else {
+                unregister_code(KC_UP);
+            }
             break;
     }
 }
